@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.mycompany.hanoutimanagementsystem.ui.ItemsViewController">
+    
+    <!-- قسم الإدخال العلوي -->
+    <top>
+        <VBox spacing="15" styleClass="input-section">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            
+            <!-- عنوان القسم -->
+            <Label text="إدارة الأصناف - Items Management" styleClass="section-title"/>
+            
+            <!-- حقول الإدخال -->
+            <GridPane hgap="15" vgap="12">
+                <!-- رقم SKU -->
+                <Label text="رقم SKU:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                <TextField fx:id="skuField" promptText="أدخل رقم SKU (أرقام فقط)" 
+                          GridPane.columnIndex="1" GridPane.rowIndex="0" prefWidth="200"/>
+                
+                <!-- الاسم -->
+                <Label text="الاسم / Name:" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                <TextField fx:id="nameField" promptText="اسم الصنف" 
+                          GridPane.columnIndex="3" GridPane.rowIndex="0" prefWidth="200"/>
+                
+                <!-- الكمية -->
+                <Label text="الكمية / Stock:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                <TextField fx:id="stockField" promptText="الكمية (أرقام فقط)" 
+                          GridPane.columnIndex="1" GridPane.rowIndex="1" prefWidth="200"/>
+                
+                <!-- القسم (علاقة إجبارية) -->
+                <Label text="القسم / Section:" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                <ComboBox fx:id="sectionComboBox" promptText="اختر القسم (إجباري)" 
+                         GridPane.columnIndex="3" GridPane.rowIndex="1" prefWidth="200"/>
+            </GridPane>
+            
+            <!-- أزرار العمليات -->
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Button fx:id="addButton" text="إضافة / Add" onAction="#handleAdd" 
+                       styleClass="primary-button"/>
+                <Button fx:id="updateButton" text="تحديث / Update" onAction="#handleUpdate" 
+                       styleClass="primary-button"/>
+                <Button fx:id="deleteButton" text="حذف / Delete" onAction="#handleDelete" 
+                       styleClass="danger-button"/>
+                <Button fx:id="clearButton" text="مسح / Clear" onAction="#handleClear"/>
+            </HBox>
+        </VBox>
+    </top>
+    
+    <!-- الجدول الرئيسي -->
+    <center>
+        <VBox spacing="10">
+            <padding>
+                <Insets top="10" right="20" bottom="20" left="20"/>
+            </padding>
+            
+            <!-- شريط البحث والفلترة -->
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="بحث / Search:"/>
+                <TextField fx:id="searchField" promptText="ابحث بالاسم أو SKU" 
+                          prefWidth="250" onKeyReleased="#handleSearch"/>
+                <Label text="فلتر حسب القسم:"/>
+                <ComboBox fx:id="filterSectionComboBox" promptText="كل الأقسام" 
+                         prefWidth="200" onAction="#handleFilterBySection"/>
+                <Button text="إعادة تحميل / Refresh" onAction="#handleRefresh"/>
+            </HBox>
+            
+            <!-- جدول الأصناف -->
+            <TableView fx:id="itemsTable" styleClass="data-table" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="skuColumn" text="SKU" prefWidth="100"/>
+                    <TableColumn fx:id="nameColumn" text="الاسم / Name" prefWidth="250"/>
+                    <TableColumn fx:id="stockColumn" text="الكمية / Stock" prefWidth="100"/>
+                    <TableColumn fx:id="sectionColumn" text="القسم / Section" prefWidth="200"/>
+                </columns>
+                <placeholder>
+                    <Label text="لا توجد أصناف - No items found"/>
+                </placeholder>
+            </TableView>
+        </VBox>
+    </center>
+    
+</BorderPane>

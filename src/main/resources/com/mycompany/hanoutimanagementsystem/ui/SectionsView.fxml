@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.mycompany.hanoutimanagementsystem.ui.SectionsViewController">
+    
+    <top>
+        <VBox spacing="15" styleClass="input-section">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            
+            <Label text="إدارة الأقسام - Sections Management" styleClass="section-title"/>
+            
+            <GridPane hgap="15" vgap="12">
+                <Label text="الرمز / Code:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                <TextField fx:id="codeField" promptText="رمز القسم" 
+                          GridPane.columnIndex="1" GridPane.rowIndex="0" prefWidth="200"/>
+                
+                <Label text="التسمية / Label:" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                <TextField fx:id="labelField" promptText="اسم القسم" 
+                          GridPane.columnIndex="3" GridPane.rowIndex="0" prefWidth="300"/>
+            </GridPane>
+            
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Button text="إضافة / Add" onAction="#handleAdd" styleClass="primary-button"/>
+                <Button text="تحديث / Update" onAction="#handleUpdate" styleClass="primary-button"/>
+                <Button text="حذف / Delete" onAction="#handleDelete" styleClass="danger-button"/>
+                <Button text="مسح / Clear" onAction="#handleClear"/>
+            </HBox>
+        </VBox>
+    </top>
+    
+    <center>
+        <VBox spacing="10">
+            <padding>
+                <Insets top="10" right="20" bottom="20" left="20"/>
+            </padding>
+            
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="بحث / Search:"/>
+                <TextField fx:id="searchField" promptText="ابحث بالرمز أو التسمية" 
+                          prefWidth="300" onKeyReleased="#handleSearch"/>
+                <Button text="إعادة تحميل / Refresh" onAction="#handleRefresh"/>
+            </HBox>
+            
+            <TableView fx:id="sectionsTable" styleClass="data-table" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="codeColumn" text="الرمز / Code" prefWidth="150"/>
+                    <TableColumn fx:id="labelColumn" text="التسمية / Label" prefWidth="300"/>
+                    <TableColumn fx:id="itemCountColumn" text="عدد الأصناف / Items Count" prefWidth="150"/>
+                </columns>
+                <placeholder>
+                    <Label text="لا توجد أقسام - No sections found"/>
+                </placeholder>
+            </TableView>
+        </VBox>
+    </center>
+    
+</BorderPane>

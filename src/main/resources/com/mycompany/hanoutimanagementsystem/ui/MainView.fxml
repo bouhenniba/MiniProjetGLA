@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.mycompany.hanoutimanagementsystem.ui.MainViewController">
+    
+    <!-- شريط العنوان العلوي -->
+    <top>
+        <VBox styleClass="header">
+            <padding>
+                <Insets top="15" right="20" bottom="15" left="20"/>
+            </padding>
+            <Label text="نظام إدارة حنوتي" styleClass="header-title"/>
+            <Label text="Hanouti Management System" styleClass="header-subtitle"/>
+        </VBox>
+    </top>
+    
+    <!-- محتوى التبويبات الرئيسي -->
+    <center>
+        <TabPane fx:id="mainTabPane" tabClosingPolicy="UNAVAILABLE">
+            <tabs>
+                <!-- تبويب إدارة الأصناف -->
+                <Tab text="الأصناف / Items">
+                    <fx:include source="ItemsView.fxml"/>
+                </Tab>
+                
+                <!-- تبويب إدارة الأقسام -->
+                <Tab text="الأقسام / Sections">
+                    <fx:include source="SectionsView.fxml"/>
+                </Tab>
+                
+                <!-- تبويب إدارة الموردين -->
+                <Tab text="الموردين / Vendors">
+                    <fx:include source="VendorsView.fxml"/>
+                </Tab>
+                
+                <!-- تبويب السيناريوهات التشغيلية -->
+                <Tab text="العمليات / Operations">
+                    <fx:include source="OperationsView.fxml"/>
+                </Tab>
+            </tabs>
+        </TabPane>
+    </center>
+    
+    <!-- شريط الحالة السفلي -->
+    <bottom>
+        <HBox styleClass="status-bar">
+            <padding>
+                <Insets top="10" right="20" bottom="10" left="20"/>
+            </padding>
+            <Label fx:id="statusLabel" text="جاهز - Ready"/>
+        </HBox>
+    </bottom>
+    
+</BorderPane>

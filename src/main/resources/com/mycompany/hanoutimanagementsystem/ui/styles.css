@@ -1,0 +1,325 @@
+
+/* ===== الإعدادات العامة - General Settings ===== */
+.root {
+    -fx-font-family: "Segoe UI", "Arial", sans-serif;
+    -fx-font-size: 14px;
+    -fx-background-color: #ecf0f1;
+}
+
+/* ===== شريط العنوان - Header Bar ===== */
+.header {
+    -fx-background-color: linear-gradient(to bottom, #2c3e50, #34495e);
+    -fx-padding: 15px 20px;
+}
+
+.header-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.header-subtitle {
+    -fx-font-size: 14px;
+    -fx-text-fill: #bdc3c7;
+    -fx-padding: 5px 0 0 0;
+}
+
+/* ===== التبويبات - Tabs ===== */
+.tab-pane {
+    -fx-background-color: white;
+}
+
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: #34495e;
+}
+
+.tab-pane .tab {
+    -fx-background-color: #34495e;
+    -fx-background-radius: 0;
+    -fx-padding: 10px 20px;
+}
+
+.tab-pane .tab:selected {
+    -fx-background-color: white;
+}
+
+.tab-pane .tab .tab-label {
+    -fx-text-fill: #bdc3c7;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.tab-pane .tab:selected .tab-label {
+    -fx-text-fill: #2c3e50;
+}
+
+/* ===== أقسام الإدخال - Input Sections ===== */
+.input-section {
+    -fx-background-color: white;
+    -fx-padding: 20px;
+    -fx-border-color: #dcdde1;
+    -fx-border-width: 0 0 2px 0;
+}
+
+.section-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+    -fx-padding: 0 0 10px 0;
+}
+
+/* ===== حقول النصوص - Text Fields ===== */
+.text-field {
+    -fx-background-color: white;
+    -fx-border-color: #bdc3c7;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-padding: 8px 12px;
+    -fx-font-size: 14px;
+}
+
+.text-field:focused {
+    -fx-border-color: #3498db;
+    -fx-border-width: 2px;
+}
+
+.text-field:disabled {
+    -fx-background-color: #ecf0f1;
+    -fx-opacity: 0.7;
+}
+
+/* ===== القوائم المنسدلة - ComboBox ===== */
+.combo-box {
+    -fx-background-color: white;
+    -fx-border-color: #bdc3c7;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-padding: 6px 10px;
+}
+
+.combo-box:focused {
+    -fx-border-color: #3498db;
+    -fx-border-width: 2px;
+}
+
+.combo-box .list-cell {
+    -fx-padding: 8px 12px;
+}
+
+.combo-box-popup .list-view {
+    -fx-background-color: white;
+    -fx-border-color: #3498db;
+    -fx-border-width: 1px;
+}
+
+.combo-box-popup .list-view .list-cell:hover {
+    -fx-background-color: #ecf0f1;
+}
+
+.combo-box-popup .list-view .list-cell:selected {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+}
+
+/* ===== الأزرار - Buttons ===== */
+.button {
+    -fx-background-color: #95a5a6;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 10px 20px;
+    -fx-background-radius: 4px;
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+}
+
+.button:hover {
+    -fx-background-color: #7f8c8d;
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+
+.button:pressed {
+    -fx-background-color: #34495e;
+}
+
+/* الأزرار الرئيسية - Primary Buttons */
+.primary-button {
+    -fx-background-color: #3498db;
+}
+
+.primary-button:hover {
+    -fx-background-color: #2980b9;
+}
+
+.primary-button:pressed {
+    -fx-background-color: #1f6ca0;
+}
+
+/* أزرار الحذف - Danger Buttons */
+.danger-button {
+    -fx-background-color: #e74c3c;
+}
+
+.danger-button:hover {
+    -fx-background-color: #c0392b;
+}
+
+.danger-button:pressed {
+    -fx-background-color: #a93226;
+}
+
+/* أزرار النجاح - Success Buttons */
+.success-button {
+    -fx-background-color: #27ae60;
+}
+
+.success-button:hover {
+    -fx-background-color: #229954;
+}
+
+/* ===== الجداول - Tables ===== */
+.data-table {
+    -fx-background-color: white;
+    -fx-border-color: #dcdde1;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+}
+
+.data-table .column-header-background {
+    -fx-background-color: #34495e;
+}
+
+.data-table .column-header {
+    -fx-background-color: transparent;
+}
+
+.data-table .column-header .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-padding: 10px;
+    -fx-alignment: center-right;
+}
+
+.data-table .table-row-cell {
+    -fx-background-color: white;
+    -fx-border-color: transparent transparent #ecf0f1 transparent;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.data-table .table-row-cell:odd {
+    -fx-background-color: #f8f9fa;
+}
+
+.data-table .table-row-cell:hover {
+    -fx-background-color: #e3f2fd;
+}
+
+.data-table .table-row-cell:selected {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+}
+
+.data-table .table-row-cell:selected .text {
+    -fx-fill: white;
+}
+
+.data-table .table-cell {
+    -fx-padding: 10px;
+    -fx-alignment: center-right;
+}
+
+.data-table .placeholder .label {
+    -fx-text-fill: #95a5a6;
+    -fx-font-style: italic;
+}
+
+/* ===== أقسام السيناريوهات - Scenario Sections ===== */
+.scenario-section {
+    -fx-background-color: white;
+    -fx-border-color: #dcdde1;
+    -fx-border-width: 1px;
+    -fx-border-radius: 6px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 2);
+}
+
+.scenario-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+/* ===== الفواصل - Separators ===== */
+.separator {
+    -fx-background-color: #dcdde1;
+}
+
+/* ===== شريط الحالة - Status Bar ===== */
+.status-bar {
+    -fx-background-color: #34495e;
+    -fx-padding: 10px 20px;
+}
+
+.status-bar .label {
+    -fx-text-fill: #bdc3c7;
+    -fx-font-size: 13px;
+}
+
+/* ===== التسميات - Labels ===== */
+.label {
+    -fx-text-fill: #2c3e50;
+    -fx-font-size: 14px;
+}
+
+/* ===== مربعات الحوار - Alerts ===== */
+.alert {
+    -fx-background-color: white;
+}
+
+.alert .header-panel {
+    -fx-background-color: #34495e;
+}
+
+.alert .header-panel .label {
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.alert .content {
+    -fx-padding: 20px;
+}
+
+/* ===== أشرطة التمرير - ScrollBars ===== */
+.scroll-bar {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: #bdc3c7;
+    -fx-background-radius: 4px;
+}
+
+.scroll-bar .thumb:hover {
+    -fx-background-color: #95a5a6;
+}
+
+.scroll-bar .track {
+    -fx-background-color: #ecf0f1;
+}
+
+/* ===== الاستجابة للشاشات الصغيرة - Responsive Design ===== */
+@media screen and (max-width: 800px) {
+    .root {
+        -fx-font-size: 12px;
+    }
+    
+    .header-title {
+        -fx-font-size: 20px;
+    }
+    
+    .section-title {
+        -fx-font-size: 16px;
+    }
+}

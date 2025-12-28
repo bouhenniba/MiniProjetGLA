@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.mycompany.hanoutimanagementsystem.ui.OperationsViewController"
+      spacing="20">
+    
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+    
+    <Label text="السيناريوهات التشغيلية - Operational Scenarios" styleClass="section-title"/>
+    
+    <!-- السيناريو الأول: مخزون القسم -->
+    <VBox spacing="10" styleClass="scenario-section">
+        <padding>
+            <Insets top="15" right="15" bottom="15" left="15"/>
+        </padding>
+        
+        <Label text="١. مخزون القسم - Section Inventory" styleClass="scenario-title"/>
+        <Separator/>
+        
+        <HBox spacing="15" alignment="CENTER_LEFT">
+            <Label text="اختر القسم / Select Section:"/>
+            <ComboBox fx:id="sectionInventoryComboBox" promptText="اختر قسماً" 
+                     prefWidth="250" onAction="#handleSectionInventoryQuery"/>
+            <Button text="عرض / Show" onAction="#handleSectionInventoryQuery" styleClass="primary-button"/>
+        </HBox>
+        
+        <TableView fx:id="sectionInventoryTable" styleClass="data-table" prefHeight="200">
+            <columns>
+                <TableColumn fx:id="invSkuColumn" text="SKU" prefWidth="100"/>
+                <TableColumn fx:id="invNameColumn" text="الاسم / Name" prefWidth="300"/>
+                <TableColumn fx:id="invStockColumn" text="الكمية / Stock" prefWidth="100"/>
+            </columns>
+            <placeholder>
+                <Label text="اختر قسماً لعرض مخزونه - Select a section to view its inventory"/>
+            </placeholder>
+        </TableView>
+    </VBox>
+    
+    <!-- السيناريو الثاني: مقارنة الموردين -->
+    <VBox spacing="10" styleClass="scenario-section">
+        <padding>
+            <Insets top="15" right="15" bottom="15" left="15"/>
+        </padding>
+        
+        <Label text="٢. مقارنة الموردين - Vendor Comparison" styleClass="scenario-title"/>
+        <Separator/>
+        
+        <HBox spacing="15" alignment="CENTER_LEFT">
+            <Label text="اختر الصنف / Select Item:"/>
+            <ComboBox fx:id="itemComparisonComboBox" promptText="اختر صنفاً" 
+                     prefWidth="250" onAction="#handleVendorComparisonQuery"/>
+            <Button text="مقارنة / Compare" onAction="#handleVendorComparisonQuery" styleClass="primary-button"/>
+        </HBox>
+        
+        <TableView fx:id="vendorComparisonTable" styleClass="data-table" prefHeight="200">
+            <columns>
+                <TableColumn fx:id="compLicenseColumn" text="رقم الرخصة / License" prefWidth="200"/>
+                <TableColumn fx:id="compContactColumn" text="جهة الاتصال / Contact" prefWidth="250"/>
+            </columns>
+            <placeholder>
+                <Label text="اختر صنفاً لعرض مورديه - Select an item to view its vendors"/>
+            </placeholder>
+        </TableView>
+    </VBox>
+    
+    <!-- السيناريو الثالث: كتالوج المورد -->
+    <VBox spacing="10" styleClass="scenario-section">
+        <padding>
+            <Insets top="15" right="15" bottom="15" left="15"/>
+        </padding>
+        
+        <Label text="٣. كتالوج المورد - Vendor Catalog" styleClass="scenario-title"/>
+        <Separator/>
+        
+        <HBox spacing="15" alignment="CENTER_LEFT">
+            <Label text="اختر المورد / Select Vendor:"/>
+            <ComboBox fx:id="vendorCatalogComboBox" promptText="اختر مورداً" 
+                     prefWidth="250" onAction="#handleVendorCatalogQuery"/>
+            <Button text="عرض الكتالوج / Show Catalog" onAction="#handleVendorCatalogQuery" styleClass="primary-button"/>
+        </HBox>
+        
+        <TableView fx:id="vendorCatalogTable" styleClass="data-table" prefHeight="200">
+            <columns>
+                <TableColumn fx:id="catSkuColumn" text="SKU" prefWidth="100"/>
+                <TableColumn fx:id="catNameColumn" text="الاسم / Name" prefWidth="300"/>
+                <TableColumn fx:id="catSectionColumn" text="القسم / Section" prefWidth="200"/>
+            </columns>
+            <placeholder>
+                <Label text="اختر مورداً لعرض كتالوجه - Select a vendor to view their catalog"/>
+            </placeholder>
+        </TableView>
+    </VBox>
+    
+</VBox>
