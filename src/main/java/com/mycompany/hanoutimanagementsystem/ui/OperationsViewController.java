@@ -1,173 +1,131 @@
 package com.mycompany.hanoutimanagementsystem.ui;
 
+import com.mycompany.hanoutimanagementsystem.controller.ItemController;
+import com.mycompany.hanoutimanagementsystem.controller.SectionController;
+import com.mycompany.hanoutimanagementsystem.controller.VendorController;
+import com.mycompany.hanoutimanagementsystem.model.Item;
+import com.mycompany.hanoutimanagementsystem.model.Section;
+import com.mycompany.hanoutimanagementsystem.model.SupplyContract;
+import com.mycompany.hanoutimanagementsystem.model.Vendor;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.collections.*;
-import javafx.scene.control.cell.PropertyValueFactory;
-import com.mycompany.hanoutimanagementsystem.model.*;
-import com.mycompany.hanoutimanagementsystem.controller.*;
+import javafx.scene.layout.HBox;
+
 import java.math.BigDecimal;
 import java.util.List;
 
-/**
- * متحكم واجهة السيناريوهات التشغيلية - النسخة الكاملة
- */
 public class OperationsViewController {
-    
-    // ===== السيناريو الأول: مخزون القسم =====
-    @FXML private ComboBox<Section> sectionInventoryComboBox;
-    @FXML private TableView<Item> sectionInventoryTable;
-    @FXML private TableColumn<Item, Long> invSkuColumn;
-    @FXML private TableColumn<Item, String> invNameColumn;
-    @FXML private TableColumn<Item, Integer> invStockColumn;
-    @FXML private TableColumn<Item, BigDecimal> invPriceColumn;
-    
-    // ===== السيناريو الثاني: مقارنة الموردين =====
-    @FXML private ComboBox<Item> itemComparisonComboBox;
-    @FXML private TableView<Vendor> vendorComparisonTable;
-    @FXML private TableColumn<Vendor, String> compLicenseColumn;
-    @FXML private TableColumn<Vendor, String> compContactColumn;
-    
-    // ===== السيناريو الثالث: كتالوج المورد =====
-    @FXML private ComboBox<Vendor> vendorCatalogComboBox;
-    @FXML private TableView<Item> vendorCatalogTable;
-    @FXML private TableColumn<Item, Long> catSkuColumn;
-    @FXML private TableColumn<Item, String> catNameColumn;
-    @FXML private TableColumn<Item, String> catSectionColumn;
-    @FXML private TableColumn<Item, BigDecimal> catPriceColumn;
-    
-    // ===== إدارة علاقة Item-Vendor =====
+
+    // Unified View Components
+    @FXML private TabPane operationsTabPane;
+    @FXML private TableView<UnifiedOperationView> unifiedTable;
+    @FXML private TableColumn<UnifiedOperationView, String> col1;
+    @FXML private TableColumn<UnifiedOperationView, String> col2;
+    @FXML private TableColumn<UnifiedOperationView, String> col3;
+    @FXML private TableColumn<UnifiedOperationView, BigDecimal> col4;
+
+    // Filter Controls
+    @FXML private ComboBox<Section> sectionFilterComboBox;
+    @FXML private ComboBox<Item> itemFilterComboBox;
+    @FXML private ComboBox<Vendor> vendorFilterComboBox;
+
+    // Item-Vendor Management
     @FXML private ComboBox<Item> manageItemComboBox;
     @FXML private ComboBox<Vendor> manageVendorComboBox;
-    @FXML private ListView<Vendor> currentVendorsListView;
-    
-    // المتحكمات الخلفية
+    @FXML private TextField supplyPriceField;
+    @FXML private ListView<SupplyContract> currentVendorsListView;
+
+    // Controllers
     private ItemController itemController;
     private SectionController sectionController;
     private VendorController vendorController;
-    
-    // القوائم المرصودة
+
+    // Observable Lists
     private ObservableList<Section> sectionsList;
     private ObservableList<Item> itemsList;
     private ObservableList<Vendor> vendorsList;
-    
-    /**
-     * ✅ تعيين المتحكمات
-     */
-    public void setControllers(ItemController itemController, 
-                               SectionController sectionController,
-                               VendorController vendorController) {
+    private ObservableList<UnifiedOperationView> unifiedDataList;
+
+    public void setControllers(ItemController itemController, SectionController sectionController, VendorController vendorController) {
         this.itemController = itemController;
         this.sectionController = sectionController;
         this.vendorController = vendorController;
-        
-        if (sectionInventoryTable != null) {
-            initializeAfterInjection();
-        }
     }
-    
-    /**
-     * ✅ FXML initialize
-     */
+
     @FXML
     public void initialize() {
-        System.out.println("🔍 OperationsViewController.initialize() called");
-        
-        setupTableColumns();
-        
-        if (itemController != null && sectionController != null && vendorController != null) {
-            initializeAfterInjection();
-        }
-    }
-    
-    /**
-     * ✅ تهيئة بعد حقن المتحكمات
-     */
-    private void initializeAfterInjection() {
-        System.out.println("✅ Initializing with injected controllers");
-        
         sectionsList = FXCollections.observableArrayList();
         itemsList = FXCollections.observableArrayList();
         vendorsList = FXCollections.observableArrayList();
-        
-        setupComboBoxes();
+        unifiedDataList = FXCollections.observableArrayList();
+
+        unifiedTable.setItems(unifiedDataList);
+
+        setupUnifiedTable();
+        addDecimalValidation(supplyPriceField);
+        setupFilterControls();
+        setupTabPane();
+        setupManagementComboBoxes();
         loadAllData();
     }
-    
-    /**
-     * إعداد أعمدة الجداول
-     */
-    private void setupTableColumns() {
-        // مخزون القسم
-        invSkuColumn.setCellValueFactory(new PropertyValueFactory<>("sku"));
-        invNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-        invStockColumn.setCellValueFactory(new PropertyValueFactory<>("stock"));
-        invPriceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
-        
-        // مقارنة الموردين
-        compLicenseColumn.setCellValueFactory(new PropertyValueFactory<>("licenseNumber"));
-        compContactColumn.setCellValueFactory(new PropertyValueFactory<>("contactName"));
-        
-        // كتالوج المورد
-        catSkuColumn.setCellValueFactory(new PropertyValueFactory<>("sku"));
-        catNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-        catSectionColumn.setCellValueFactory(cellData -> 
-            new javafx.beans.property.SimpleStringProperty(
-                cellData.getValue().getSection() != null ? 
-                cellData.getValue().getSection().getLabel() : "N/A"
-            )
-        );
-        catPriceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
+
+    private void setupUnifiedTable() {
+        col1.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getId()));
+        col2.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getName()));
+        col3.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDescription()));
+        col4.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getValue()));
     }
-    
-    /**
-     * إعداد ComboBoxes
-     */
-    private void setupComboBoxes() {
-        // Section ComboBox
-        sectionInventoryComboBox.setItems(sectionsList);
-        sectionInventoryComboBox.setCellFactory(param -> new ListCell<Section>() {
-            @Override
-            protected void updateItem(Section item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty || item == null ? null : item.toString());
+
+    private void setupFilterControls() {
+        sectionFilterComboBox.setPromptText("اختر قسم");
+        sectionFilterComboBox.setPrefWidth(300);
+        sectionFilterComboBox.setOnAction(e -> handleSectionInventoryQuery());
+
+        itemFilterComboBox.setPromptText("اختر صنف");
+        itemFilterComboBox.setPrefWidth(350);
+        itemFilterComboBox.setOnAction(e -> handleVendorComparisonQuery());
+
+        vendorFilterComboBox.setPromptText("اختر مورد");
+        vendorFilterComboBox.setPrefWidth(350);
+        vendorFilterComboBox.setOnAction(e -> handleVendorCatalogQuery());
+    }
+
+    private void setupTabPane() {
+        operationsTabPane.getSelectionModel().selectedItemProperty().addListener((obs, oldTab, newTab) -> {
+            if (newTab != null) {
+                unifiedDataList.clear();
+                updateTableColumns(newTab.getText());
             }
         });
-        sectionInventoryComboBox.setButtonCell(new ListCell<Section>() {
-            @Override
-            protected void updateItem(Section item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty || item == null ? null : item.toString());
-            }
-        });
-        
-        // Item ComboBoxes
-        itemComparisonComboBox.setItems(itemsList);
+    }
+
+    private void updateTableColumns(String tabText) {
+        if (tabText.contains("Section Inventory")) {
+            col1.setText("SKU");
+            col2.setText("اسم الصنف");
+            col3.setText("الكمية");
+            col4.setText("السعر");
+        } else if (tabText.contains("Vendor Comparison")) {
+            col1.setText("رقم الرخصة");
+            col2.setText("جهة الاتصال");
+            col3.setText("الصنف");
+            col4.setText("سعر التوريد");
+        } else if (tabText.contains("Vendor Catalog")) {
+            col1.setText("SKU");
+            col2.setText("اسم الصنف");
+            col3.setText("القسم");
+            col4.setText("السعر");
+        }
+    }
+
+    private void setupManagementComboBoxes() {
         manageItemComboBox.setItems(itemsList);
-        
-        ListCell<Item> itemCellFactory = new ListCell<Item>() {
-            @Override
-            protected void updateItem(Item item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty || item == null ? null : item.toString());
-            }
-        };
-        
-        itemComparisonComboBox.setCellFactory(param -> new ListCell<Item>() {
-            @Override
-            protected void updateItem(Item item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty || item == null ? null : item.toString());
-            }
-        });
-        itemComparisonComboBox.setButtonCell(new ListCell<Item>() {
-            @Override
-            protected void updateItem(Item item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty || item == null ? null : item.toString());
-            }
-        });
-        
+        manageVendorComboBox.setItems(vendorsList);
+
         manageItemComboBox.setCellFactory(param -> new ListCell<Item>() {
             @Override
             protected void updateItem(Item item, boolean empty) {
@@ -182,26 +140,7 @@ public class OperationsViewController {
                 setText(empty || item == null ? null : item.toString());
             }
         });
-        
-        // Vendor ComboBoxes
-        vendorCatalogComboBox.setItems(vendorsList);
-        manageVendorComboBox.setItems(vendorsList);
-        
-        vendorCatalogComboBox.setCellFactory(param -> new ListCell<Vendor>() {
-            @Override
-            protected void updateItem(Vendor item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty || item == null ? null : item.toString());
-            }
-        });
-        vendorCatalogComboBox.setButtonCell(new ListCell<Vendor>() {
-            @Override
-            protected void updateItem(Vendor item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty || item == null ? null : item.toString());
-            }
-        });
-        
+
         manageVendorComboBox.setCellFactory(param -> new ListCell<Vendor>() {
             @Override
             protected void updateItem(Vendor item, boolean empty) {
@@ -216,9 +155,8 @@ public class OperationsViewController {
                 setText(empty || item == null ? null : item.toString());
             }
         });
-        
-        // ✅ Listener لتحديث قائمة الموردين
-        if (manageItemComboBox != null && currentVendorsListView != null) {
+
+        if (manageItemComboBox != null) {
             manageItemComboBox.valueProperty().addListener((obs, oldVal, newVal) -> {
                 if (newVal != null) {
                     updateCurrentVendorsList(newVal);
@@ -228,243 +166,209 @@ public class OperationsViewController {
             });
         }
     }
-    
-    /**
-     * ✅ تحميل جميع البيانات
-     */
+
     private void loadAllData() {
         try {
-            System.out.println("📊 جاري تحميل البيانات...");
-            
             List<Section> sections = sectionController.getAllSections();
             List<Item> items = itemController.getAllItems();
             List<Vendor> vendors = vendorController.getAllVendors();
-            
+
             sectionsList.setAll(sections);
             itemsList.setAll(items);
             vendorsList.setAll(vendors);
-            
-            System.out.println("✅ تم التحميل - Sections: " + sections.size() +
-                             ", Items: " + items.size() +
-                             ", Vendors: " + vendors.size());
-            
-            // ✅ طباعة تفاصيل العلاقات للتشخيص
-            for (Item item : items) {
-                System.out.println("  📦 " + item.getName() + 
-                                 " - موردين: " + item.getVendors().size());
-            }
-            
+
+            sectionFilterComboBox.setItems(sectionsList);
+            itemFilterComboBox.setItems(itemsList);
+            vendorFilterComboBox.setItems(vendorsList);
+
         } catch (Exception e) {
-            e.printStackTrace();
             showError("خطأ في تحميل البيانات", e.getMessage());
         }
     }
-    
-    /**
-     * ✅ تحديث جميع البيانات - دالة عامة
-     */
+
     @FXML
     public void refreshAllData() {
         loadAllData();
-        
-        // إعادة تعيين الـ ComboBoxes
-        sectionInventoryComboBox.setValue(null);
-        itemComparisonComboBox.setValue(null);
-        vendorCatalogComboBox.setValue(null);
+        unifiedDataList.clear();
         manageItemComboBox.setValue(null);
         manageVendorComboBox.setValue(null);
-        
-        // مسح الجداول
-        sectionInventoryTable.setItems(FXCollections.observableArrayList());
-        vendorComparisonTable.setItems(FXCollections.observableArrayList());
-        vendorCatalogTable.setItems(FXCollections.observableArrayList());
+        supplyPriceField.clear();
         currentVendorsListView.setItems(FXCollections.observableArrayList());
-        
         showSuccess("تم تحديث البيانات بنجاح");
-        System.out.println("✅ تم تحديث جميع البيانات");
     }
-    
-    // ================= Event Handlers =================
-    
-    /**
-     * السيناريو 1: عرض مخزون القسم
-     */
-    @FXML
+
     private void handleSectionInventoryQuery() {
-        Section selected = sectionInventoryComboBox.getValue();
-        if (selected == null) {
-            sectionInventoryTable.setItems(FXCollections.observableArrayList());
-            return;
-        }
-        
+        Section selected = sectionFilterComboBox.getValue();
+        if (selected == null) return;
         try {
             List<Item> items = itemController.getItemsBySection(selected.getCode());
-            sectionInventoryTable.setItems(FXCollections.observableArrayList(items));
-            System.out.println("✅ عرض " + items.size() + " صنف للقسم: " + selected.getLabel());
+            unifiedDataList.clear();
+            for (Item item : items) {
+                unifiedDataList.add(new UnifiedOperationView(
+                        String.valueOf(item.getSku()),
+                        item.getName(),
+                        String.valueOf(item.getStock()),
+                        item.getPrice()
+                ));
+            }
         } catch (Exception e) {
             showError("خطأ", "فشل عرض المخزون: " + e.getMessage());
         }
     }
-    
-    /**
-     * السيناريو 2: مقارنة الموردين لصنف معين
-     */
-    @FXML
+
     private void handleVendorComparisonQuery() {
-        Item selected = itemComparisonComboBox.getValue();
-        if (selected == null) {
-            vendorComparisonTable.setItems(FXCollections.observableArrayList());
-            return;
-        }
-        
+        Item selected = itemFilterComboBox.getValue();
+        if (selected == null) return;
         try {
-            List<Vendor> vendors = vendorController.getVendorsByItem(selected.getSku());
-            vendorComparisonTable.setItems(FXCollections.observableArrayList(vendors));
-            System.out.println("✅ عرض " + vendors.size() + " مورد للصنف: " + selected.getName());
-            
-            if (vendors.isEmpty()) {
-                showInfo("لا توجد موردين", 
-                    "لم يتم ربط أي موردين بهذا الصنف بعد.\n" +
-                    "استخدم قسم 'إدارة العلاقات' لربط موردين.");
+            List<SupplyContract> contracts = vendorController.getVendorsByItem(selected.getSku());
+            unifiedDataList.clear();
+            for (SupplyContract contract : contracts) {
+                unifiedDataList.add(new UnifiedOperationView(
+                        contract.getVendor().getLicenseNumber(),
+                        contract.getVendor().getContactName(),
+                        selected.getName(),
+                        contract.getSupplyPrice()
+                ));
+            }
+            if (contracts.isEmpty()) {
+                showInfo("لا توجد موردين", "لم يتم ربط أي موردين بهذا الصنف بعد.");
             }
         } catch (Exception e) {
             showError("خطأ", "فشل عرض الموردين: " + e.getMessage());
         }
     }
-    
-    /**
-     * السيناريو 3: عرض كتالوج المورد
-     */
-    @FXML
+
     private void handleVendorCatalogQuery() {
-        Vendor selected = vendorCatalogComboBox.getValue();
-        if (selected == null) {
-            vendorCatalogTable.setItems(FXCollections.observableArrayList());
-            return;
-        }
-        
+        Vendor selected = vendorFilterComboBox.getValue();
+        if (selected == null) return;
         try {
             List<Item> items = vendorController.getItemsByVendor(selected.getLicenseNumber());
-            vendorCatalogTable.setItems(FXCollections.observableArrayList(items));
-            System.out.println("✅ عرض " + items.size() + " صنف للمورد: " + selected.getContactName());
-            
+            unifiedDataList.clear();
+            for (Item item : items) {
+                unifiedDataList.add(new UnifiedOperationView(
+                        String.valueOf(item.getSku()),
+                        item.getName(),
+                        item.getSection() != null ? item.getSection().getLabel() : "N/A",
+                        item.getPrice()
+                ));
+            }
             if (items.isEmpty()) {
-                showInfo("لا توجد أصناف", 
-                    "لم يتم ربط أي أصناف بهذا المورد بعد.\n" +
-                    "استخدم قسم 'إدارة العلاقات' لربط أصناف.");
+                showInfo("لا توجد أصناف", "لم يتم ربط أي أصناف بهذا المورد بعد.");
             }
         } catch (Exception e) {
             showError("خطأ", "فشل عرض الكتالوج: " + e.getMessage());
         }
     }
-    
-    /**
-     * ✅ إضافة مورد لصنف
-     */
+
     @FXML
     private void handleAddVendorToItem() {
         Item item = manageItemComboBox.getValue();
         Vendor vendor = manageVendorComboBox.getValue();
-        
-        if (item == null || vendor == null) {
-            showError("خطأ", "يرجى اختيار صنف ومورد");
+        String priceText = supplyPriceField.getText();
+
+        if (item == null || vendor == null || priceText.trim().isEmpty()) {
+            showError("خطأ", "يرجى اختيار صنف ومورد وإدخال سعر التوريد");
             return;
         }
-        
+
         try {
-            itemController.addVendorToItem(item.getSku(), vendor.getLicenseNumber());
+            BigDecimal price = new BigDecimal(priceText);
+            itemController.addVendorToItem(item.getSku(), vendor.getLicenseNumber(), price);
             updateCurrentVendorsList(item);
             showSuccess("✅ تم ربط المورد بالصنف بنجاح");
-            
-            // ✅ تحديث القوائم
+            supplyPriceField.clear();
             loadAllData();
-            
-        } catch (IllegalArgumentException e) {
-            showError("خطأ", e.getMessage());
+        } catch (NumberFormatException e) {
+            showError("خطأ", "صيغة السعر غير صحيحة");
         } catch (Exception e) {
             showError("خطأ", "فشلت عملية الربط: " + e.getMessage());
-            e.printStackTrace();
         }
     }
-    
-    /**
-     * ✅ إزالة مورد من صنف
-     */
+
     @FXML
     private void handleRemoveVendorFromItem() {
         Item item = manageItemComboBox.getValue();
-        Vendor vendor = currentVendorsListView.getSelectionModel().getSelectedItem();
-        
-        if (item == null || vendor == null) {
+        SupplyContract contract = currentVendorsListView.getSelectionModel().getSelectedItem();
+
+        if (item == null || contract == null) {
             showError("خطأ", "يرجى اختيار مورد من القائمة");
             return;
         }
-        
-        Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
+
+        Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION, "هل أنت متأكد من إزالة هذا المورد؟", ButtonType.OK, ButtonType.CANCEL);
         confirmAlert.setTitle("تأكيد الإزالة");
-        confirmAlert.setHeaderText("هل أنت متأكد من إزالة هذا المورد؟");
-        confirmAlert.setContentText(vendor.getContactName());
-        
-        if (confirmAlert.showAndWait().get() == ButtonType.OK) {
+        confirmAlert.setHeaderText(contract.getVendor().getContactName());
+
+        if (confirmAlert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
             try {
-                itemController.removeVendorFromItem(item.getSku(), vendor.getLicenseNumber());
+                itemController.removeVendorFromItem(item.getSku(), contract.getVendor().getLicenseNumber());
                 updateCurrentVendorsList(item);
                 showSuccess("✅ تم إزالة المورد من الصنف");
-                
-                // ✅ تحديث القوائم
                 loadAllData();
-                
             } catch (Exception e) {
                 showError("خطأ", "فشلت عملية الإزالة: " + e.getMessage());
             }
         }
     }
-    
-    /**
-     * ✅ تحديث قائمة الموردين الحاليين للصنف
-     */
+
     private void updateCurrentVendorsList(Item item) {
         if (currentVendorsListView == null || item == null) return;
-        
         try {
-            // ✅ إعادة جلب الصنف من قاعدة البيانات بموردينه
             Item refreshed = itemController.findItem(item.getSku());
             if (refreshed != null) {
-                ObservableList<Vendor> vendors = FXCollections.observableArrayList(
-                    refreshed.getVendors()
-                );
-                currentVendorsListView.setItems(vendors);
-                System.out.println("✅ تم تحديث القائمة - موردين: " + vendors.size());
+                currentVendorsListView.setItems(FXCollections.observableArrayList(refreshed.getVendorSupplies()));
             }
         } catch (Exception e) {
-            System.err.println("❌ خطأ في تحديث القائمة: " + e.getMessage());
             e.printStackTrace();
         }
     }
-    
-    // ================= Utility Methods =================
-    
+
+    private void addDecimalValidation(TextField textField) {
+        textField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*(\\.\\d*)?")) {
+                textField.setText(oldValue);
+            }
+        });
+    }
+
     private void showSuccess(String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        Alert alert = new Alert(Alert.AlertType.INFORMATION, message);
         alert.setTitle("نجاح");
         alert.setHeaderText(null);
-        alert.setContentText(message);
         alert.showAndWait();
     }
-    
+
     private void showError(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
+        Alert alert = new Alert(Alert.AlertType.ERROR, message);
         alert.setTitle(title);
         alert.setHeaderText(null);
-        alert.setContentText(message);
         alert.showAndWait();
     }
-    
+
     private void showInfo(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        Alert alert = new Alert(Alert.AlertType.INFORMATION, message);
         alert.setTitle(title);
         alert.setHeaderText(null);
-        alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    // Inner class for the unified table view
+    public static class UnifiedOperationView {
+        private final String id;
+        private final String name;
+        private final String description;
+        private final BigDecimal value;
+
+        public UnifiedOperationView(String id, String name, String description, BigDecimal value) {
+            this.id = id;
+            this.name = name;
+            this.description = description;
+            this.value = value;
+        }
+
+        public String getId() { return id; }
+        public String getName() { return name; }
+        public String getDescription() { return description; }
+        public BigDecimal getValue() { return value; }
     }
 }

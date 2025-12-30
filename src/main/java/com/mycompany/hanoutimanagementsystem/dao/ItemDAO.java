@@ -49,11 +49,12 @@ public class ItemDAO implements InterfaceItemDAO {
     public Item findBySku(Long sku) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            // ✅ تحميل الصنف مع الموردين والقسم
+            // ✅ تحميل الصنف مع عقود التوريد والقسم
             TypedQuery<Item> query = em.createQuery(
                 "SELECT DISTINCT i FROM Item i " +
                 "LEFT JOIN FETCH i.section " +
-                "LEFT JOIN FETCH i.vendors " +
+                "LEFT JOIN FETCH i.vendorSupplies vs " +
+                "LEFT JOIN FETCH vs.vendor " +
                 "WHERE i.sku = :sku",
                 Item.class
             );
@@ -69,11 +70,11 @@ public class ItemDAO implements InterfaceItemDAO {
     public List<Item> findAll() {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            // ✅ تحميل القسم والموردين مع الأصناف
+            // ✅ تحميل القسم وعقود التوريد مع الأصناف
             return em.createQuery(
                 "SELECT DISTINCT i FROM Item i " +
                 "LEFT JOIN FETCH i.section " +
-                "LEFT JOIN FETCH i.vendors", 
+                "LEFT JOIN FETCH i.vendorSupplies",
                 Item.class
             ).getResultList();
         } finally {
@@ -85,10 +86,10 @@ public class ItemDAO implements InterfaceItemDAO {
     public List<Item> findBySection(String sectionCode) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            // ✅ تحميل الموردين أيضاً
+            // ✅ تحميل عقود التوريد أيضاً
             TypedQuery<Item> query = em.createQuery(
                 "SELECT DISTINCT i FROM Item i " +
-                "LEFT JOIN FETCH i.vendors " +
+                "LEFT JOIN FETCH i.vendorSupplies " +
                 "WHERE i.section.code = :code",
                 Item.class
             );
@@ -103,12 +104,12 @@ public class ItemDAO implements InterfaceItemDAO {
     public List<Item> findByVendor(String licenseNumber) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            // ✅ تحميل القسم والموردين
+            // ✅ تحميل القسم وعقود التوريد
             TypedQuery<Item> query = em.createQuery(
                 "SELECT DISTINCT i FROM Item i " +
                 "LEFT JOIN FETCH i.section " +
-                "LEFT JOIN FETCH i.vendors v " +
-                "WHERE v.licenseNumber = :license",
+                "JOIN i.vendorSupplies vs " +
+                "WHERE vs.vendor.licenseNumber = :license",
                 Item.class
             );
             query.setParameter("license", licenseNumber);

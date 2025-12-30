@@ -1,11 +1,6 @@
 package com.mycompany.hanoutimanagementsystem.model;
 
-
-import com.mycompany.hanoutimanagementsystem.model.Item;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,19 +8,23 @@ import java.util.Set;
 public class Vendor {
 
     @Id
-    @Column(name = "LICENSE_NUMBER") // الربط مع عمود قاعدة البيانات
-    private String licenseNumber; // رقم الرخصة الفريد
+    @Column(name = "LICENSE_NUMBER")
+    private String licenseNumber;
+
+    @Column(name = "VENDOR_NAME") // اسم المورد
+    private String vendorName;
 
     @Column(name = "CONTACT_NAME")
-    private String contactName;   // اسم جهة الاتصال
+    private String contactName;
 
-    @ManyToMany(mappedBy = "vendors")
-    private Set<Item> items = new HashSet<>();
+    @OneToMany(mappedBy = "vendor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<SupplyContract> providedItems = new HashSet<>();
 
     // Constructors
     public Vendor() {}
-    public Vendor(String licenseNumber, String contactName) {
+    public Vendor(String licenseNumber, String vendorName, String contactName) {
         this.licenseNumber = licenseNumber;
+        this.vendorName = vendorName;
         this.contactName = contactName;
     }
 
@@ -33,13 +32,17 @@ public class Vendor {
     public String getLicenseNumber() { return licenseNumber; }
     public void setLicenseNumber(String licenseNumber) { this.licenseNumber = licenseNumber; }
 
+    public String getVendorName() { return vendorName; }
+    public void setVendorName(String vendorName) { this.vendorName = vendorName; }
+
     public String getContactName() { return contactName; }
     public void setContactName(String contactName) { this.contactName = contactName; }
 
-    public Set<Item> getItems() { return items; }
-    public void setItems(Set<Item> items) { this.items = items; }
+    public Set<SupplyContract> getProvidedItems() { return providedItems; }
+    public void setProvidedItems(Set<SupplyContract> providedItems) { this.providedItems = providedItems; }
+    
     @Override
-public String toString() {
-    return licenseNumber + " - " + contactName;
-}
+    public String toString() {
+        return vendorName + " (" + licenseNumber + ")";
+    }
 }

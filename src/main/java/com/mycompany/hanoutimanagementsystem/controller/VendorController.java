@@ -4,6 +4,7 @@ import com.mycompany.hanoutimanagementsystem.dao.InterfaceVendorDAO;
 import com.mycompany.hanoutimanagementsystem.dao.InterfaceItemDAO;
 import com.mycompany.hanoutimanagementsystem.model.Vendor;
 import com.mycompany.hanoutimanagementsystem.model.Item;
+import com.mycompany.hanoutimanagementsystem.model.SupplyContract;
 
 import java.util.List;
 
@@ -29,6 +30,11 @@ public class VendorController {
         vendorDAO.create(vendor);
     }
 
+    // ✅ Overloaded method to support creating vendor with contracts
+    public void createVendor(Vendor vendor) {
+        vendorDAO.create(vendor);
+    }
+
     public void updateVendor(Vendor vendor) {
         vendorDAO.update(vendor);
     }
@@ -47,11 +53,15 @@ public class VendorController {
 
     // ===== Operational Scenarios =====
 
+    public List<Item> getAllItems() {
+        return itemDAO.findAll();
+    }
+
     /**
      * سيناريو:
      * مقارنة الموردين الذين يوفرون نفس الصنف
      */
-    public List<Vendor> getVendorsByItem(Long sku) {
+    public List<SupplyContract> getVendorsByItem(Long sku) {
         return vendorDAO.findByItemSku(sku);
     }
 

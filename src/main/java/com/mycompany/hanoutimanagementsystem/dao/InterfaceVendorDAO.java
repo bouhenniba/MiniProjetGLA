@@ -1,6 +1,7 @@
 package com.mycompany.hanoutimanagementsystem.dao;
 
 import com.mycompany.hanoutimanagementsystem.model.Vendor;
+import com.mycompany.hanoutimanagementsystem.model.SupplyContract;
 import java.util.List;
 
 public interface InterfaceVendorDAO {
@@ -17,5 +18,5 @@ public interface InterfaceVendorDAO {
     List<Vendor> findAll();                      // عرض كل الموردين
 
     // ===== Operational Scenarios =====
-    List<Vendor> findByItemSku(Long sku);        // جميع الموردين الذين يوفرون صنفًا معينًا (لمقارنة التوريد)
+    List<SupplyContract> findByItemSku(Long sku);        // جميع عقود التوريد لصنف معين (لمقارنة التوريد)
 }

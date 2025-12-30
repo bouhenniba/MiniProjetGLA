@@ -1,444 +1,635 @@
-/* ===== الإعدادات العامة - General Settings ===== */
+/* ===================================================
+   MODERN HANOUTI MANAGEMENT SYSTEM - STYLESHEET
+   Enhanced UI with Clean, Professional Design
+   =================================================== */
+
+/* ===== ROOT & GLOBAL SETTINGS ===== */
 .root {
-    -fx-font-family: "Segoe UI", "Roboto", "Arial", sans-serif;
+    -fx-font-family: "Segoe UI", "Inter", "Roboto", "Arial", sans-serif;
     -fx-font-size: 14px;
-    -fx-background-color: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+    -fx-background-color: #f5f7fa;
+    -fx-font-smoothing-type: gray;
 }
 
-/* ===== شريط العنوان - Header Bar ===== */
+* {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+/* ===== HEADER SECTION ===== */
 .header {
-    -fx-background-color: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #7e22ce 100%);
-    -fx-padding: 30px 40px;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.35), 15, 0, 0, 5);
+    -fx-background-color: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -fx-padding: 25px 30px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 10, 0, 0, 3);
 }
 
 .header-title {
     -fx-font-size: 32px;
-    -fx-font-weight: bold;
+    -fx-font-weight: 700;
     -fx-text-fill: white;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 4, 0, 0, 2);
-    -fx-letter-spacing: 1px;
-}
-
-.header-subtitle {
-    -fx-font-size: 16px;
-    -fx-text-fill: rgba(255, 255, 255, 0.95);
-    -fx-padding: 8px 0 0 0;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 5, 0, 0, 2);
     -fx-letter-spacing: 0.5px;
 }
 
-/* ===== التبويبات - Tabs (Extended Full Width) ===== */
+.header-subtitle {
+    -fx-font-size: 15px;
+    -fx-text-fill: rgba(255, 255, 255, 0.85);
+    -fx-padding: 5px 0 0 0;
+    -fx-font-weight: 400;
+    -fx-letter-spacing: 0.3px;
+}
+
+/* ===== TABS DESIGN ===== */
 .tab-pane {
-    -fx-background-color: rgba(255, 255, 255, 0.95);
-    -fx-border-radius: 12px;
-    -fx-background-radius: 12px;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 15, 0, 0, 5);
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
 }
 
 .tab-pane .tab-header-area {
     -fx-padding: 0;
+    -fx-background-color: white;
+    -fx-border-color: transparent transparent #e1e8ed transparent;
+    -fx-border-width: 0 0 1px 0;
 }
 
 .tab-pane .tab-header-area .tab-header-background {
-    -fx-background-color: linear-gradient(to bottom, #1e3c72, #2a5298);
-    -fx-background-radius: 12px 12px 0 0;
+    -fx-background-color: white;
 }
 
 .tab-pane .tab-header-area .headers-region {
     -fx-background-color: transparent;
 }
 
-.tab-pane .tab-header-area .tab-header-area-inner {
-    -fx-background-color: transparent;
-}
-
-/* التبويبات الممتدة على طول الشاشة - كل تبويب يأخذ نفس المساحة */
 .tab-pane .tab {
     -fx-background-color: transparent;
     -fx-background-radius: 0;
-    -fx-padding: 18px 40px;
-    -fx-background-insets: 0;
-    -fx-min-width: 200px;
-    -fx-pref-width: -1;
-    -fx-max-width: Infinity;
+    -fx-padding: 15px 25px;
+    -fx-border-color: transparent;
+    -fx-border-width: 0 0 3px 0;
 }
 
 .tab-pane .tab:selected {
-    -fx-background-color: rgba(255, 255, 255, 0.2);
-    -fx-border-color: transparent transparent #fbbf24 transparent;
-    -fx-border-width: 0 0 4px 0;
-}
-
-.tab-pane .tab .tab-label {
-    -fx-text-fill: rgba(255, 255, 255, 0.75);
-    -fx-font-size: 16px;
-    -fx-font-weight: 700;
-    -fx-letter-spacing: 0.5px;
-}
-
-.tab-pane .tab:selected .tab-label {
-    -fx-text-fill: white;
-    -fx-font-size: 16px;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent transparent #667eea transparent;
+    -fx-border-width: 0 0 3px 0;
 }
 
 .tab-pane .tab:hover {
-    -fx-background-color: rgba(255, 255, 255, 0.15);
+    -fx-background-color: rgba(102, 126, 234, 0.05);
 }
 
-.tab-pane > .tab-content-area {
-    -fx-background-color: transparent;
-    -fx-border-radius: 0 0 12px 12px;
-    -fx-background-radius: 0 0 12px 12px;
+.tab-pane .tab .tab-label {
+    -fx-text-fill: #6c757d;
+    -fx-font-size: 15px;
+    -fx-font-weight: 600;
+}
+
+.tab-pane .tab:selected .tab-label {
+    -fx-text-fill: #667eea;
+}
+
+.tab-pane .tab-content-area {
+    -fx-background-color: #f5f7fa;
     -fx-padding: 0;
 }
 
-/* ===== أقسام الإدخال - Input Sections ===== */
+/* ===== INPUT SECTIONS ===== */
 .input-section {
-    -fx-background-color: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-    -fx-padding: 28px;
-    -fx-border-color: rgba(255, 255, 255, 0.5);
-    -fx-border-width: 2px;
-    -fx-border-radius: 12px;
+    -fx-background-color: white;
+    -fx-padding: 30px;
     -fx-background-radius: 12px;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 3);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 15, 0, 0, 2);
+    -fx-border-color: #e1e8ed;
+    -fx-border-width: 1px;
+    -fx-border-radius: 12px;
 }
 
 .section-title {
-    -fx-font-size: 22px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #5a3e8f;
-    -fx-padding: 0 0 15px 0;
-    -fx-effect: dropshadow(gaussian, rgba(255,255,255,0.5), 1, 0, 0, 1);
+    -fx-font-size: 24px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #2d3748;
+    -fx-padding: 0 0 20px 0;
 }
 
-/* ===== حقول النصوص - Text Fields ===== */
+/* ===== TEXT FIELDS ===== */
 .text-field {
-    -fx-background-color: white;
-    -fx-border-color: #b8a6d9;
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #e1e8ed;
     -fx-border-width: 2px;
     -fx-border-radius: 8px;
     -fx-background-radius: 8px;
-    -fx-padding: 10px 14px;
+    -fx-padding: 12px 16px;
     -fx-font-size: 14px;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.08), 4, 0, 0, 2);
+    -fx-text-fill: #2d3748;
+    -fx-prompt-text-fill: #a0aec0;
 }
 
 .text-field:focused {
+    -fx-background-color: white;
     -fx-border-color: #667eea;
-    -fx-border-width: 2.5px;
-    -fx-effect: dropshadow(three-pass-box, rgba(102, 126, 234, 0.4), 8, 0, 0, 0);
-    -fx-background-color: #fffef8;
+    -fx-border-width: 2px;
+    -fx-effect: dropshadow(gaussian, rgba(102, 126, 234, 0.2), 8, 0, 0, 0);
+}
+
+.text-field:hover {
+    -fx-border-color: #cbd5e0;
 }
 
 .text-field:disabled {
-    -fx-background-color: #f3f4f6;
-    -fx-opacity: 0.7;
+    -fx-background-color: #e2e8f0;
+    -fx-opacity: 0.6;
 }
 
-/* ===== القوائم المنسدلة - ComboBox ===== */
+/* ===== COMBO BOX ===== */
 .combo-box {
-    -fx-background-color: white;
-    -fx-border-color: #b8a6d9;
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #e1e8ed;
     -fx-border-width: 2px;
     -fx-border-radius: 8px;
     -fx-background-radius: 8px;
-    -fx-padding: 7px 12px;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.08), 4, 0, 0, 2);
-}
-
-.combo-box:focused {
-    -fx-border-color: #667eea;
-    -fx-border-width: 2.5px;
-    -fx-effect: dropshadow(three-pass-box, rgba(102, 126, 234, 0.4), 8, 0, 0, 0);
 }
 
 .combo-box .list-cell {
-    -fx-padding: 9px 14px;
-    -fx-font-size: 14px;
+    -fx-background-color: transparent;
+    -fx-padding: 12px 16px;
+    -fx-text-fill: #2d3748;
+}
+
+.combo-box:focused {
+    -fx-background-color: white;
+    -fx-border-color: #667eea;
+    -fx-effect: dropshadow(gaussian, rgba(102, 126, 234, 0.2), 8, 0, 0, 0);
+}
+
+.combo-box:hover {
+    -fx-border-color: #cbd5e0;
+}
+
+.combo-box .arrow-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0 8px 0 0;
+}
+
+.combo-box .arrow {
+    -fx-background-color: #718096;
 }
 
 .combo-box-popup .list-view {
     -fx-background-color: white;
-    -fx-border-color: #667eea;
-    -fx-border-width: 2px;
+    -fx-border-color: #e1e8ed;
+    -fx-border-width: 1px;
     -fx-border-radius: 8px;
     -fx-background-radius: 8px;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 15, 0, 0, 5);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 20, 0, 0, 5);
+}
+
+.combo-box-popup .list-view .list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 12px 16px;
+    -fx-text-fill: #2d3748;
 }
 
 .combo-box-popup .list-view .list-cell:hover {
-    -fx-background-color: #e8ebff;
+    -fx-background-color: #f7fafc;
 }
 
 .combo-box-popup .list-view .list-cell:selected {
-    -fx-background-color: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -fx-background-color: #667eea;
     -fx-text-fill: white;
 }
 
-/* ===== الأزرار - Buttons ===== */
+/* ===== BUTTONS ===== */
 .button {
-    -fx-background-color: linear-gradient(135deg, #a8b8d8 0%, #7e8ba3 100%);
+    -fx-background-color: #718096;
     -fx-text-fill: white;
     -fx-font-size: 14px;
-    -fx-font-weight: 700;
-    -fx-padding: 11px 22px;
+    -fx-font-weight: 600;
+    -fx-padding: 12px 24px;
     -fx-background-radius: 8px;
     -fx-cursor: hand;
     -fx-border-width: 0;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 5, 0, 0, 3);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 5, 0, 0, 2);
 }
 
 .button:hover {
-    -fx-background-color: linear-gradient(135deg, #8fa3c4 0%, #6b7891 100%);
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 8, 0, 0, 4);
-    -fx-translate-y: -2px;
+    -fx-background-color: #4a5568;
+    -fx-scale-x: 1.03;
+    -fx-scale-y: 1.03;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 8, 0, 0, 3);
 }
 
 .button:pressed {
-    -fx-background-color: linear-gradient(135deg, #7a8db0 0%, #5a667a 100%);
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 3, 0, 0, 1);
-    -fx-translate-y: 0px;
+    -fx-background-color: #2d3748;
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
 }
 
-/* الأزرار الرئيسية - Primary Buttons */
+/* Primary Button */
 .primary-button {
-    -fx-background-color: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -fx-background-color: linear-gradient(to bottom, #667eea, #5a67d8);
+    -fx-effect: dropshadow(gaussian, rgba(102, 126, 234, 0.4), 8, 0, 0, 3);
 }
 
 .primary-button:hover {
-    -fx-background-color: linear-gradient(135deg, #5568d3 0%, #653a8b 100%);
+    -fx-background-color: linear-gradient(to bottom, #5a67d8, #4c51bf);
+    -fx-effect: dropshadow(gaussian, rgba(102, 126, 234, 0.6), 12, 0, 0, 4);
 }
 
 .primary-button:pressed {
-    -fx-background-color: linear-gradient(135deg, #4a55b8 0%, #543074 100%);
+    -fx-background-color: #4c51bf;
 }
 
-/* أزرار الحذف - Danger Buttons */
+/* Danger Button */
 .danger-button {
-    -fx-background-color: linear-gradient(135deg, #ff6b9d 0%, #c23866 100%);
+    -fx-background-color: linear-gradient(to bottom, #f56565, #e53e3e);
+    -fx-effect: dropshadow(gaussian, rgba(245, 101, 101, 0.4), 8, 0, 0, 3);
 }
 
 .danger-button:hover {
-    -fx-background-color: linear-gradient(135deg, #ff5689 0%, #ab2e57 100%);
+    -fx-background-color: linear-gradient(to bottom, #e53e3e, #c53030);
+    -fx-effect: dropshadow(gaussian, rgba(245, 101, 101, 0.6), 12, 0, 0, 4);
 }
 
 .danger-button:pressed {
-    -fx-background-color: linear-gradient(135deg, #e64178 0%, #941f43 100%);
+    -fx-background-color: #c53030;
 }
 
-/* أزرار النجاح - Success Buttons */
+/* Success Button */
 .success-button {
-    -fx-background-color: linear-gradient(135deg, #5ee7df 0%, #b490ca 100%);
+    -fx-background-color: linear-gradient(to bottom, #48bb78, #38a169);
+    -fx-effect: dropshadow(gaussian, rgba(72, 187, 120, 0.4), 8, 0, 0, 3);
 }
 
 .success-button:hover {
-    -fx-background-color: linear-gradient(135deg, #4ad4cc 0%, #a07db7 100%);
+    -fx-background-color: linear-gradient(to bottom, #38a169, #2f855a);
+    -fx-effect: dropshadow(gaussian, rgba(72, 187, 120, 0.6), 12, 0, 0, 4);
 }
 
-/* ===== الجداول - Tables (بدون سكرول داخلي) ===== */
+/* ===== TABLES ===== */
 .data-table {
     -fx-background-color: white;
-    -fx-border-color: #c7a7e8;
-    -fx-border-width: 2px;
+    -fx-border-color: #e1e8ed;
+    -fx-border-width: 1px;
     -fx-border-radius: 12px;
     -fx-background-radius: 12px;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.12), 10, 0, 0, 4);
-    -fx-fixed-cell-size: 48;
-}
-
-/* إلغاء السكرول الداخلي للجدول */
-.data-table .scroll-bar:vertical {
-    -fx-opacity: 0;
-    -fx-pref-width: 0;
-    -fx-max-width: 0;
-}
-
-.data-table .virtual-flow {
-    -fx-background-color: transparent;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 15, 0, 0, 2);
 }
 
 .data-table .column-header-background {
-    -fx-background-color: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-    -fx-border-radius: 10px 10px 0 0;
-    -fx-background-radius: 10px 10px 0 0;
+    -fx-background-color: #f7fafc;
+    -fx-background-radius: 12px 12px 0 0;
 }
 
 .data-table .column-header {
     -fx-background-color: transparent;
+    -fx-border-color: transparent transparent #e1e8ed transparent;
+    -fx-border-width: 0 0 2px 0;
 }
 
 .data-table .column-header .label {
-    -fx-text-fill: white;
-    -fx-font-weight: 800;
+    -fx-text-fill: #2d3748;
+    -fx-font-weight: 700;
     -fx-font-size: 14px;
-    -fx-padding: 14px;
+    -fx-padding: 16px 12px;
     -fx-alignment: center-right;
-}
-
-.data-table .filler {
-    -fx-background-color: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
 }
 
 .data-table .table-row-cell {
     -fx-background-color: white;
-    -fx-border-color: transparent transparent #e8ebff transparent;
-    -fx-border-width: 0 0 2px 0;
-    -fx-padding: 4px;
+    -fx-border-color: transparent transparent #f1f5f9 transparent;
+    -fx-border-width: 0 0 1px 0;
+    -fx-padding: 8px 0;
 }
 
 .data-table .table-row-cell:odd {
-    -fx-background-color: #fafbff;
+    -fx-background-color: #fafbfc;
 }
 
 .data-table .table-row-cell:hover {
-    -fx-background-color: linear-gradient(135deg, #fff0f5 0%, #ffe8f5 100%);
+    -fx-background-color: #f0f4ff;
+    -fx-cursor: hand;
 }
 
 .data-table .table-row-cell:selected {
-    -fx-background-color: linear-gradient(135deg, #ff6b9d 0%, #c23866 100%);
-    -fx-text-fill: white;
+    -fx-background-color: #e6eeff;
+    -fx-text-fill: #2d3748;
 }
 
 .data-table .table-row-cell:selected .text {
-    -fx-fill: white;
+    -fx-fill: #2d3748;
+    -fx-font-weight: 600;
 }
 
 .data-table .table-cell {
     -fx-padding: 12px;
     -fx-alignment: center-right;
-    -fx-font-size: 14px;
+    -fx-text-fill: #4a5568;
 }
 
 .data-table .placeholder .label {
-    -fx-text-fill: #9ca3af;
+    -fx-text-fill: #a0aec0;
     -fx-font-style: italic;
     -fx-font-size: 15px;
 }
 
-/* ===== أقسام السيناريوهات - Scenario Sections ===== */
+.data-table .filler {
+    -fx-background-color: transparent;
+}
+
+/* ===== LABELS ===== */
+.label {
+    -fx-text-fill: #4a5568;
+    -fx-font-size: 14px;
+    -fx-font-weight: 500;
+}
+
+/* ===== STATUS BAR ===== */
+.status-bar {
+    -fx-background-color: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -fx-padding: 12px 30px;
+    -fx-border-color: transparent;
+}
+
+.status-bar .label {
+    -fx-text-fill: rgba(255, 255, 255, 0.95);
+    -fx-font-size: 13px;
+    -fx-font-weight: 500;
+}
+
+/* ===== SCENARIO SECTIONS ===== */
 .scenario-section {
-    -fx-background-color: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-    -fx-border-color: rgba(255, 255, 255, 0.6);
-    -fx-border-width: 2px;
+    -fx-background-color: white;
+    -fx-border-color: #e1e8ed;
+    -fx-border-width: 1px;
     -fx-border-radius: 12px;
     -fx-background-radius: 12px;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 3);
+    -fx-padding: 20px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 15, 0, 0, 2);
 }
 
 .scenario-title {
     -fx-font-size: 18px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #4a3e6f;
+    -fx-font-weight: 700;
+    -fx-text-fill: #2d3748;
+    -fx-padding: 0 0 15px 0;
 }
 
-/* ===== الفواصل - Separators ===== */
+/* ===== SEPARATORS ===== */
 .separator {
-    -fx-background-color: rgba(102, 126, 234, 0.3);
+    -fx-background-color: #e1e8ed;
+    -fx-padding: 1px;
 }
 
 .separator .line {
-    -fx-border-color: rgba(102, 126, 234, 0.3);
-    -fx-border-width: 2px;
+    -fx-background-color: #e1e8ed;
+    -fx-border-width: 0;
 }
 
-/* ===== شريط الحالة - Status Bar ===== */
-.status-bar {
-    -fx-background-color: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #7e22ce 100%);
-    -fx-padding: 12px 40px;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.25), 10, 0, 0, -3);
-}
-
-.status-bar .label {
-    -fx-text-fill: white;
-    -fx-font-size: 13px;
-    -fx-font-weight: 600;
-}
-
-/* ===== التسميات - Labels ===== */
-.label {
-    -fx-text-fill: #4a3e6f;
-    -fx-font-size: 14px;
-    -fx-font-weight: 600;
-}
-
-/* ===== مربعات الحوار - Alerts ===== */
-.alert {
-    -fx-background-color: white;
-}
-
-.alert .header-panel {
-    -fx-background-color: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-    -fx-padding: 18px;
-}
-
-.alert .header-panel .label {
-    -fx-text-fill: white;
-    -fx-font-size: 18px;
-    -fx-font-weight: bold;
-}
-
-.alert .content {
-    -fx-padding: 25px;
-    -fx-background-color: #fafbff;
-}
-
-/* ===== أشرطة التمرير - ScrollBars (للصفحة الرئيسية فقط) ===== */
+/* ===== SCROLL BARS ===== */
 .scroll-bar {
-    -fx-background-color: rgba(255, 255, 255, 0.3);
+    -fx-background-color: transparent;
+    -fx-padding: 2px;
 }
 
 .scroll-bar .thumb {
-    -fx-background-color: rgba(102, 126, 234, 0.5);
-    -fx-background-radius: 6px;
+    -fx-background-color: #cbd5e0;
+    -fx-background-radius: 8px;
 }
 
 .scroll-bar .thumb:hover {
-    -fx-background-color: rgba(102, 126, 234, 0.7);
+    -fx-background-color: #a0aec0;
+}
+
+.scroll-bar .thumb:pressed {
+    -fx-background-color: #718096;
 }
 
 .scroll-bar .track {
-    -fx-background-color: rgba(255, 255, 255, 0.2);
+    -fx-background-color: #f7fafc;
+    -fx-background-radius: 8px;
 }
 
 .scroll-bar .increment-button,
 .scroll-bar .decrement-button {
     -fx-background-color: transparent;
+    -fx-padding: 0;
 }
 
-/* ===== ScrollPane ===== */
-.scroll-pane {
+.scroll-bar .increment-arrow,
+.scroll-bar .decrement-arrow {
     -fx-background-color: transparent;
 }
 
-.scroll-pane > .viewport {
-    -fx-background-color: transparent;
+/* Vertical ScrollBar */
+.scroll-bar:vertical {
+    -fx-pref-width: 12px;
 }
 
-/* ===== تأثيرات إضافية ===== */
-.button {
-    -fx-transition: all 0.3s ease;
+/* Horizontal ScrollBar */
+.scroll-bar:horizontal {
+    -fx-pref-height: 12px;
 }
 
-.text-field,
-.combo-box {
-    -fx-transition: all 0.2s ease;
+/* ===== ALERTS & DIALOGS ===== */
+.alert {
+    -fx-background-color: white;
 }
 
-/* ===== الاستجابة للشاشات الصغيرة ===== */
+.alert .header-panel {
+    -fx-background-color: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -fx-padding: 20px;
+}
+
+.alert .header-panel .label {
+    -fx-text-fill: white;
+    -fx-font-size: 18px;
+    -fx-font-weight: 700;
+}
+
+.alert .content {
+    -fx-padding: 25px;
+    -fx-background-color: white;
+}
+
+.alert .button-bar {
+    -fx-padding: 15px 25px 25px 25px;
+}
+
+/* ===== GRID PANE ENHANCEMENTS ===== */
+.grid-pane {
+    -fx-hgap: 20px;
+    -fx-vgap: 16px;
+}
+
+/* ===== VBOX & HBOX SPACING ===== */
+.vbox {
+    -fx-spacing: 15px;
+}
+
+.hbox {
+    -fx-spacing: 12px;
+}
+
+/* ===== TOOLTIP ===== */
+.tooltip {
+    -fx-background-color: #2d3748;
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-padding: 8px 12px;
+    -fx-background-radius: 6px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0, 0, 3);
+}
+
+/* ===== CONTEXT MENU ===== */
+.context-menu {
+    -fx-background-color: white;
+    -fx-border-color: #e1e8ed;
+    -fx-border-width: 1px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 15, 0, 0, 5);
+}
+
+.context-menu .menu-item {
+    -fx-padding: 10px 16px;
+}
+
+.context-menu .menu-item:hover {
+    -fx-background-color: #f0f4ff;
+}
+
+.context-menu .menu-item .label {
+    -fx-text-fill: #2d3748;
+}
+
+/* ===== PROGRESS BAR ===== */
+.progress-bar {
+    -fx-background-color: #e1e8ed;
+    -fx-background-radius: 8px;
+}
+
+.progress-bar .bar {
+    -fx-background-color: linear-gradient(to right, #667eea, #764ba2);
+    -fx-background-radius: 8px;
+    -fx-padding: 4px;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media screen and (max-width: 1200px) {
+    .root {
+        -fx-font-size: 13px;
+    }
+
+    .header-title {
+        -fx-font-size: 28px;
+    }
+
+    .section-title {
+        -fx-font-size: 20px;
+    }
+}
+
 @media screen and (max-width: 800px) {
     .root {
         -fx-font-size: 12px;
     }
-    
+
     .header-title {
         -fx-font-size: 24px;
     }
-    
+
+    .header-subtitle {
+        -fx-font-size: 13px;
+    }
+
     .section-title {
         -fx-font-size: 18px;
     }
-    
-    .tab-pane .tab {
-        -fx-padding: 14px 30px;
+
+    .button {
+        -fx-padding: 10px 18px;
+        -fx-font-size: 13px;
     }
 }
+
+/* ===== ANIMATION CLASSES ===== */
+.fade-in {
+    -fx-opacity: 0;
+}
+
+.slide-in {
+    -fx-translate-x: -20;
+}
+
+/* ===== ACCENT COLORS ===== */
+.accent-primary {
+    -fx-text-fill: #667eea;
+}
+
+.accent-success {
+    -fx-text-fill: #48bb78;
+}
+
+.accent-danger {
+    -fx-text-fill: #f56565;
+}
+
+.accent-warning {
+    -fx-text-fill: #ed8936;
+}
+
+/* ===== CARD STYLE ===== */
+.card {
+    -fx-background-color: white;
+    -fx-background-radius: 12px;
+    -fx-padding: 20px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 15, 0, 0, 2);
+    -fx-border-color: #e1e8ed;
+    -fx-border-width: 1px;
+    -fx-border-radius: 12px;
+}
+
+.card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.12), 20, 0, 0, 4);
+}
+
+/* ===== BADGE STYLE ===== */
+.badge {
+    -fx-background-color: #667eea;
+    -fx-text-fill: white;
+    -fx-background-radius: 12px;
+    -fx-padding: 4px 12px;
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+}
+
+.badge-success {
+    -fx-background-color: #48bb78;
+}
+
+.badge-danger {
+    -fx-background-color: #f56565;
+}
+
+.badge-warning {
+    -fx-background-color: #ed8936;
+}
+
+/* ===== EMPTY STATE ===== */
+.empty-state {
+    -fx-padding: 60px 40px;
+    -fx-alignment: center;
+}
+
+.empty-state .label {
+    -fx-font-size: 16px;
+    -fx-text-fill: #a0aec0;
+    -fx-font-style: italic;
+}
+
+/* ===== LOADING INDICATOR ===== */
+.progress-indicator {
+    -fx-progress-color: #667eea;
+}
+
+/* ===== END OF STYLESHEET ===== */

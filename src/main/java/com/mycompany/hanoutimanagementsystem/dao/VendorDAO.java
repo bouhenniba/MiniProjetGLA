@@ -1,6 +1,7 @@
 package com.mycompany.hanoutimanagementsystem.dao;
 
 import com.mycompany.hanoutimanagementsystem.model.Vendor;
+import com.mycompany.hanoutimanagementsystem.model.SupplyContract;
 import com.mycompany.hanoutimanagementsystem.util.JPAUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
@@ -49,10 +50,11 @@ public class VendorDAO implements InterfaceVendorDAO {
     public Vendor findByLicense(String licenseNumber) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            // ✅ تحميل المورد مع الأصناف المرتبطة
+            // ✅ تحميل المورد مع عقود التوريد المرتبطة
             TypedQuery<Vendor> query = em.createQuery(
                 "SELECT DISTINCT v FROM Vendor v " +
-                "LEFT JOIN FETCH v.items " +
+                "LEFT JOIN FETCH v.providedItems pi " +
+                "LEFT JOIN FETCH pi.item " +
                 "WHERE v.licenseNumber = :license",
                 Vendor.class
             );
@@ -68,9 +70,9 @@ public class VendorDAO implements InterfaceVendorDAO {
     public List<Vendor> findAll() {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            // ✅ تحميل الأصناف مع الموردين
+            // ✅ تحميل عقود التوريد مع الموردين
             return em.createQuery(
-                "SELECT DISTINCT v FROM Vendor v LEFT JOIN FETCH v.items", 
+                "SELECT DISTINCT v FROM Vendor v LEFT JOIN FETCH v.providedItems",
                 Vendor.class
             ).getResultList();
         } finally {
@@ -79,15 +81,15 @@ public class VendorDAO implements InterfaceVendorDAO {
     }
 
     @Override
-    public List<Vendor> findByItemSku(Long sku) {
+    public List<SupplyContract> findByItemSku(Long sku) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            // ✅ تحميل الموردين مع أصنافهم
-            TypedQuery<Vendor> query = em.createQuery(
-                "SELECT DISTINCT v FROM Vendor v " +
-                "LEFT JOIN FETCH v.items i " +
-                "WHERE i.sku = :sku",
-                Vendor.class
+            // ✅ تحميل عقود التوريد مع الموردين لصنف معين
+            TypedQuery<SupplyContract> query = em.createQuery(
+                "SELECT DISTINCT sc FROM SupplyContract sc " +
+                "JOIN FETCH sc.vendor " +
+                "WHERE sc.item.sku = :sku",
+                SupplyContract.class
             );
             query.setParameter("sku", sku);
             return query.getResultList();

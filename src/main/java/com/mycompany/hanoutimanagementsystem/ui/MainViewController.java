@@ -13,7 +13,6 @@ public class MainViewController {
     private final SectionController sectionController;
     private final VendorController vendorController;
     
-    // ✅ مراجع للواجهات الفرعية
     private OperationsViewController operationsViewController;
     
     public MainViewController(ItemController itemController, 
@@ -26,14 +25,14 @@ public class MainViewController {
     
     @FXML
     public void initialize() {
-        updateStatus("النظام جاهز للاستخدام - System Ready");
+        if (statusLabel != null) {
+            updateStatus("النظام جاهز للاستخدام - System Ready");
+        }
         
-        // ✅ إضافة Listener لتبويب العمليات
         if (mainTabPane != null) {
             mainTabPane.getSelectionModel().selectedItemProperty().addListener(
                 (obs, oldTab, newTab) -> {
                     if (newTab != null && newTab.getText().contains("العمليات")) {
-                        // عند فتح تبويب العمليات، حدّث البيانات
                         refreshOperationsData();
                         updateStatus("تم تحديث بيانات العمليات");
                     }
@@ -42,16 +41,31 @@ public class MainViewController {
         }
     }
     
-    /**
-     * ✅ تعيين مرجع واجهة العمليات (يُستدعى من HanoutiApplication)
-     */
+    // Methods to handle sidebar navigation
+    @FXML
+    private void selectItemsTab() {
+        mainTabPane.getSelectionModel().select(0);
+    }
+
+    @FXML
+    private void selectSectionsTab() {
+        mainTabPane.getSelectionModel().select(1);
+    }
+
+    @FXML
+    private void selectVendorsTab() {
+        mainTabPane.getSelectionModel().select(2);
+    }
+
+    @FXML
+    private void selectOperationsTab() {
+        mainTabPane.getSelectionModel().select(3);
+    }
+    
     public void setOperationsViewController(OperationsViewController controller) {
         this.operationsViewController = controller;
     }
     
-    /**
-     * ✅ تحديث بيانات واجهة العمليات
-     */
     private void refreshOperationsData() {
         if (operationsViewController != null) {
             try {
@@ -62,9 +76,6 @@ public class MainViewController {
         }
     }
     
-    /**
-     * تحديث شريط الحالة
-     */
     public void updateStatus(String message) {
         if (statusLabel != null) {
             statusLabel.setText(message);

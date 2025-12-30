@@ -23,14 +23,9 @@ public class Item {
     @JoinColumn(name = "section_code")
     private Section section;
 
-    // ✅ تحديد Fetch Type بوضوح
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-        name = "item_vendor",
-        joinColumns = @JoinColumn(name = "item_sku"),
-        inverseJoinColumns = @JoinColumn(name = "vendor_license")
-    )
-    private Set<Vendor> vendors = new HashSet<>();
+    // ✅ تم استبدال ManyToMany بـ OneToMany للعقد الوسيط
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<SupplyContract> vendorSupplies = new HashSet<>();
 
     // Constructors
     public Item() {}
@@ -66,19 +61,8 @@ public class Item {
     public Section getSection() { return section; }
     public void setSection(Section section) { this.section = section; }
 
-    public Set<Vendor> getVendors() { return vendors; }
-    public void setVendors(Set<Vendor> vendors) { this.vendors = vendors; }
-    
-    // ✅ Helper methods لإدارة العلاقة Many-to-Many
-    public void addVendor(Vendor vendor) {
-        this.vendors.add(vendor);
-        vendor.getItems().add(this);
-    }
-    
-    public void removeVendor(Vendor vendor) {
-        this.vendors.remove(vendor);
-        vendor.getItems().remove(this);
-    }
+    public Set<SupplyContract> getVendorSupplies() { return vendorSupplies; }
+    public void setVendorSupplies(Set<SupplyContract> vendorSupplies) { this.vendorSupplies = vendorSupplies; }
     
     @Override
     public String toString() {

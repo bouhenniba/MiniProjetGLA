@@ -7,54 +7,61 @@
             fx:controller="com.mycompany.hanoutimanagementsystem.ui.MainViewController"
             prefWidth="1400" prefHeight="900">
 
-    <!-- شريط العنوان العلوي -->
-    <top>
-        <VBox styleClass="header">
-            <padding>
-                <Insets top="20" right="30" bottom="20" left="30"/>
-            </padding>
-            <Label text="نظام إدارة حنوتي" styleClass="header-title"/>
-            <Label text="Hanouti Management System - Professional Store Management" styleClass="header-subtitle"/>
-        </VBox>
-    </top>
-
-    <!-- محتوى التبويبات الرئيسي -->
+    <!-- The main content area is now an HBox to contain the sidebar and the content -->
     <center>
-        <HBox alignment="CENTER" style="-fx-background-color: transparent;">
-            <padding>
-                <Insets top="25" right="45" bottom="25" left="45"/>
-            </padding>
+        <HBox alignment="TOP_LEFT">
 
-            <VBox maxWidth="1300" HBox.hgrow="ALWAYS">
-                <TabPane fx:id="mainTabPane" tabClosingPolicy="UNAVAILABLE"
-                         VBox.vgrow="ALWAYS" tabMinWidth="200" tabMaxWidth="400">
-                    <tabs>
-                        <Tab text="الأصناف / Items">
-                            <fx:include source="ItemsView.fxml"/>
-                        </Tab>
-                        <Tab text="الأقسام / Sections">
-                            <fx:include source="SectionsView.fxml"/>
-                        </Tab>
-                        <Tab text="الموردين / Vendors">
-                            <fx:include source="VendorsView.fxml"/>
-                        </Tab>
-                        <Tab text="العمليات / Operations">
-                            <fx:include source="OperationsView.fxml"/>
-                        </Tab>
-                    </tabs>
+            <!-- Left Sidebar for Navigation -->
+            <VBox spacing="15" alignment="TOP_CENTER" styleClass="sidebar" HBox.hgrow="NEVER">
+                <padding>
+                    <Insets top="25" right="15" bottom="25" left="15"/>
+                </padding>
+
+                <!-- App Logo/Title inside Sidebar -->
+                <VBox alignment="CENTER" spacing="5" style="-fx-padding: 0 0 15 0;">
+                    <Label text="حنوتي" styleClass="sidebar-logo" />
+                    <Label text="Store Manager" styleClass="sidebar-sublogo" />
+                </VBox>
+
+                <Separator prefWidth="200" />
+
+                <!-- Navigation Buttons -->
+                <VBox spacing="8" VBox.vgrow="ALWAYS">
+                    <Button text="الأصناف / Items" styleClass="nav-button" onAction="#selectItemsTab"/>
+                    <Button text="الأقسام / Sections" styleClass="nav-button" onAction="#selectSectionsTab"/>
+                    <Button text="الموردين / Vendors" styleClass="nav-button" onAction="#selectVendorsTab"/>
+                    <Button text="العمليات / Operations" styleClass="nav-button" onAction="#selectOperationsTab"/>
+                </VBox>
+
+                <!-- Spacer to push bottom items down -->
+                <Region VBox.vgrow="ALWAYS" />
+
+                <!-- Bottom Ghost Buttons -->
+                <VBox spacing="8" alignment="CENTER">
+                    <Button text="الإعدادات / Settings" styleClass="ghost-button" prefWidth="180"/>
+                    <Button text="تسجيل الخروج / Logout" styleClass="ghost-button" prefWidth="180"/>
+                </VBox>
+            </VBox>
+
+            <!-- Right Content Area -->
+            <VBox HBox.hgrow="ALWAYS" styleClass="content-area">
+                <TabPane fx:id="mainTabPane" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+                    <Tab text="الأصناف / Items">
+                        <fx:include source="ItemsView.fxml" />
+                    </Tab>
+                    <Tab text="الأقسام / Sections">
+                        <fx:include source="SectionsView.fxml" />
+                    </Tab>
+                    <Tab text="الموردين / Vendors">
+                        <fx:include source="VendorsView.fxml" />
+                    </Tab>
+                    <Tab text="العمليات / Operations">
+                        <fx:include source="OperationsView.fxml" fx:id="operationsView" />
+                    </Tab>
                 </TabPane>
             </VBox>
+
         </HBox>
     </center>
-
-    <!-- شريط الحالة السفلي -->
-    <bottom>
-        <HBox styleClass="status-bar">
-            <padding>
-                <Insets top="10" right="30" bottom="10" left="30"/>
-            </padding>
-            <Label fx:id="statusLabel" text="جاهز - Ready ✓"/>
-        </HBox>
-    </bottom>
 
 </BorderPane>

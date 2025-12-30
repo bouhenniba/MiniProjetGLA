@@ -14,23 +14,37 @@
 
         <Label text="إدارة الموردين - Vendors Management" styleClass="section-title"/>
 
-        <GridPane hgap="18" vgap="15">
-            <columnConstraints>
-                <ColumnConstraints minWidth="130" prefWidth="160" />
-                <ColumnConstraints minWidth="200" prefWidth="300" />
-                <ColumnConstraints minWidth="130" prefWidth="160" />
-                <ColumnConstraints minWidth="200" prefWidth="300" />
-            </columnConstraints>
+        <!-- قسم التوريد -->
+        <VBox spacing="10" style="-fx-border-color: #e0e0e0; -fx-border-width: 1; -fx-padding: 15; -fx-background-color: #f9f9f9;">
+            <Label text="بيانات التوريد والمورد / Supply and Vendor Data" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
 
-            <Label text="رقم الرخصة / License:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-            <TextField fx:id="licenseField" promptText="رقم الرخصة" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+            <GridPane hgap="18" vgap="15">
+                <columnConstraints>
+                    <ColumnConstraints minWidth="130" prefWidth="160" />
+                    <ColumnConstraints minWidth="200" prefWidth="300" />
+                    <ColumnConstraints minWidth="130" prefWidth="160" />
+                    <ColumnConstraints minWidth="200" prefWidth="300" />
+                </columnConstraints>
 
-            <Label text="جهة الاتصال / Contact:" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
-            <TextField fx:id="contactField" promptText="اسم جهة الاتصال" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
-        </GridPane>
+                <Label text="اسم المورد / Vendor Name:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                <TextField fx:id="vendorNameField" promptText="اسم المورد" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                <Label text="رقم الرخصة / License:" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                <TextField fx:id="licenseField" promptText="رقم الرخصة" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+
+                <Label text="جهة الاتصال / Contact:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                <TextField fx:id="contactField" promptText="اسم جهة الاتصال" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                <Label text="الصنف / Item:" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                <ComboBox fx:id="itemComboBox" promptText="اختر الصنف" prefWidth="250" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+
+                <Label text="سعر التوريد / Supply Price:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                <TextField fx:id="supplyPriceField" promptText="0.00" prefWidth="100" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+            </GridPane>
+        </VBox>
 
         <HBox spacing="15" alignment="CENTER_LEFT">
-            <Button text="إضافة / Add" onAction="#handleAdd" styleClass="primary-button" prefWidth="120"/>
+            <Button text="حفظ المورد / Save Vendor" onAction="#handleAdd" styleClass="primary-button" prefWidth="200"/>
             <Button text="تحديث / Update" onAction="#handleUpdate" styleClass="primary-button" prefWidth="120"/>
             <Button text="حذف / Delete" onAction="#handleDelete" styleClass="danger-button" prefWidth="120"/>
             <Button text="مسح / Clear" onAction="#handleClear" prefWidth="120"/>
@@ -39,7 +53,7 @@
         <!-- شريط البحث -->
         <HBox spacing="15" alignment="CENTER_LEFT">
             <Label text="بحث / Search:" style="-fx-font-weight: bold; -fx-font-size: 15px;"/>
-            <TextField fx:id="searchField" promptText="ابحث برقم الرخصة أو جهة الاتصال" prefWidth="400" onKeyReleased="#handleSearch"/>
+            <TextField fx:id="searchField" promptText="ابحث بالاسم، الرخصة أو جهة الاتصال" prefWidth="400" onKeyReleased="#handleSearch"/>
             <Region HBox.hgrow="ALWAYS"/>
             <Button text="تحديث / Refresh" onAction="#handleRefresh" prefWidth="130"/>
         </HBox>
@@ -47,9 +61,10 @@
         <!-- جدول الموردين -->
         <TableView fx:id="vendorsTable" styleClass="data-table" VBox.vgrow="ALWAYS">
             <columns>
-                <TableColumn fx:id="licenseColumn" text="رقم الرخصة / License" prefWidth="280"/>
-                <TableColumn fx:id="contactColumn" text="جهة الاتصال / Contact" prefWidth="380"/>
-                <TableColumn fx:id="itemsSuppliedColumn" text="عدد الأصناف / Items" prefWidth="180"/>
+                <TableColumn fx:id="vendorNameColumn" text="اسم المورد / Vendor Name" prefWidth="250"/>
+                <TableColumn fx:id="licenseColumn" text="رقم الرخصة / License" prefWidth="200"/>
+                <TableColumn fx:id="contactColumn" text="جهة الاتصال / Contact" prefWidth="250"/>
+                <TableColumn fx:id="itemsSuppliedColumn" text="عدد الأصناف / Items" prefWidth="150"/>
             </columns>
             <placeholder>
                 <Label text="لا يوجد موردين - No vendors found" style="-fx-font-size: 16px;"/>

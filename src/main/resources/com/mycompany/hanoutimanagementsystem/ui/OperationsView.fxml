@@ -6,168 +6,129 @@
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.mycompany.hanoutimanagementsystem.ui.OperationsViewController"
             fitToWidth="true" style="-fx-background-color: transparent;">
-    
+
     <VBox spacing="25">
         <padding>
             <Insets top="25" right="25" bottom="25" left="25"/>
         </padding>
-        
+
         <!-- ✅ شريط الأدوات العلوي مع زر التحديث -->
         <HBox spacing="15" alignment="CENTER_LEFT" style="-fx-padding: 0 0 10 0;">
-            <Label text="السيناريوهات التشغيلية - Operational Scenarios" 
+            <Label text="السيناريوهات التشغيلية - Operational Scenarios"
                    style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #4a3e6f;"/>
             <Region HBox.hgrow="ALWAYS"/>
-            <Button text="🔄 تحديث البيانات / Refresh All" 
-                   onAction="#refreshAllData" 
-                   styleClass="success-button" 
+            <Button text="🔄 تحديث البيانات / Refresh All"
+                   onAction="#refreshAllData"
+                   styleClass="success-button"
                    prefWidth="180"
                    style="-fx-font-size: 14px;"/>
         </HBox>
-        
+
         <Separator/>
-        
-        <!-- ==================== السيناريو 1: مخزون القسم ==================== -->
+
+        <!-- ==================== Unified Operations View ==================== -->
         <VBox spacing="15" styleClass="scenario-section">
             <padding>
                 <Insets top="20" right="20" bottom="20" left="20"/>
             </padding>
-            
-            <Label text="السيناريو 1: مخزون القسم - Section Inventory" 
+
+            <Label text="عرض العمليات الموحد - Unified Operations View"
                    styleClass="scenario-title"/>
-            
-            <HBox spacing="15" alignment="CENTER_LEFT">
-                <Label text="اختر القسم:" style="-fx-font-weight: bold;"/>
-                <ComboBox fx:id="sectionInventoryComboBox" promptText="اختر قسم" 
-                         prefWidth="300"/>
-                <Button text="عرض المخزون" onAction="#handleSectionInventoryQuery" 
-                       styleClass="primary-button" prefWidth="140"/>
-            </HBox>
-            
-            <TableView fx:id="sectionInventoryTable" styleClass="data-table" 
-                      prefHeight="250">
+
+            <TabPane fx:id="operationsTabPane" tabClosingPolicy="UNAVAILABLE">
+                <tabs>
+                    <Tab text="مخزون القسم - Section Inventory">
+                        <content>
+                            <HBox spacing="15" alignment="CENTER_LEFT" style="-fx-padding: 10;">
+                                <Label text="اختر القسم:" style="-fx-font-weight: bold;"/>
+                                <ComboBox fx:id="sectionFilterComboBox" prefWidth="300" promptText="اختر قسم"/>
+                            </HBox>
+                        </content>
+                    </Tab>
+                    <Tab text="مقارنة الموردين - Vendor Comparison">
+                        <content>
+                            <HBox spacing="15" alignment="CENTER_LEFT" style="-fx-padding: 10;">
+                                <Label text="اختر الصنف:" style="-fx-font-weight: bold;"/>
+                                <ComboBox fx:id="itemFilterComboBox" prefWidth="350" promptText="اختر صنف"/>
+                            </HBox>
+                        </content>
+                    </Tab>
+                    <Tab text="كتالوج المورد - Vendor Catalog">
+                        <content>
+                            <HBox spacing="15" alignment="CENTER_LEFT" style="-fx-padding: 10;">
+                                <Label text="اختر المورد:" style="-fx-font-weight: bold;"/>
+                                <ComboBox fx:id="vendorFilterComboBox" prefWidth="350" promptText="اختر مورد"/>
+                            </HBox>
+                        </content>
+                    </Tab>
+                </tabs>
+            </TabPane>
+
+            <TableView fx:id="unifiedTable" styleClass="data-table" prefHeight="350">
                 <columns>
-                    <TableColumn fx:id="invSkuColumn" text="SKU" prefWidth="100"/>
-                    <TableColumn fx:id="invNameColumn" text="اسم الصنف" prefWidth="300"/>
-                    <TableColumn fx:id="invStockColumn" text="الكمية" prefWidth="120"/>
-                    <TableColumn fx:id="invPriceColumn" text="السعر" prefWidth="150"/>
+                    <TableColumn fx:id="col1" text="المعرف" prefWidth="150"/>
+                    <TableColumn fx:id="col2" text="الاسم" prefWidth="250"/>
+                    <TableColumn fx:id="col3" text="الوصف/القسم" prefWidth="250"/>
+                    <TableColumn fx:id="col4" text="القيمة/السعر" prefWidth="150"/>
                 </columns>
                 <placeholder>
-                    <Label text="اختر قسماً لعرض المخزون" style="-fx-font-size: 14px;"/>
+                    <Label text="اختر نوع العرض وقم بالتصفية لعرض البيانات" style="-fx-font-size: 14px;"/>
                 </placeholder>
             </TableView>
         </VBox>
-        
-        <!-- ==================== السيناريو 2: مقارنة الموردين ==================== -->
-        <VBox spacing="15" styleClass="scenario-section">
-            <padding>
-                <Insets top="20" right="20" bottom="20" left="20"/>
-            </padding>
-            
-            <Label text="السيناريو 2: مقارنة الموردين - Vendor Comparison" 
-                   styleClass="scenario-title"/>
-            <Label text="قارن بين الموردين الذين يوفرون نفس الصنف" 
-                   style="-fx-font-size: 13px; -fx-text-fill: #6b7280;"/>
-            
-            <HBox spacing="15" alignment="CENTER_LEFT">
-                <Label text="اختر الصنف:" style="-fx-font-weight: bold;"/>
-                <ComboBox fx:id="itemComparisonComboBox" promptText="اختر صنف" 
-                         prefWidth="350"/>
-                <Button text="عرض الموردين" onAction="#handleVendorComparisonQuery" 
-                       styleClass="primary-button" prefWidth="140"/>
-            </HBox>
-            
-            <TableView fx:id="vendorComparisonTable" styleClass="data-table" 
-                      prefHeight="250">
-                <columns>
-                    <TableColumn fx:id="compLicenseColumn" text="رقم الرخصة" prefWidth="250"/>
-                    <TableColumn fx:id="compContactColumn" text="جهة الاتصال" prefWidth="350"/>
-                </columns>
-                <placeholder>
-                    <Label text="اختر صنفاً لعرض الموردين" style="-fx-font-size: 14px;"/>
-                </placeholder>
-            </TableView>
-        </VBox>
-        
-        <!-- ==================== السيناريو 3: كتالوج المورد ==================== -->
-        <VBox spacing="15" styleClass="scenario-section">
-            <padding>
-                <Insets top="20" right="20" bottom="20" left="20"/>
-            </padding>
-            
-            <Label text="السيناريو 3: كتالوج المورد - Vendor Catalog" 
-                   styleClass="scenario-title"/>
-            <Label text="عرض جميع الأصناف التي يوفرها المورد" 
-                   style="-fx-font-size: 13px; -fx-text-fill: #6b7280;"/>
-            
-            <HBox spacing="15" alignment="CENTER_LEFT">
-                <Label text="اختر المورد:" style="-fx-font-weight: bold;"/>
-                <ComboBox fx:id="vendorCatalogComboBox" promptText="اختر مورد" 
-                         prefWidth="350"/>
-                <Button text="عرض الكتالوج" onAction="#handleVendorCatalogQuery" 
-                       styleClass="primary-button" prefWidth="140"/>
-            </HBox>
-            
-            <TableView fx:id="vendorCatalogTable" styleClass="data-table" 
-                      prefHeight="250">
-                <columns>
-                    <TableColumn fx:id="catSkuColumn" text="SKU" prefWidth="100"/>
-                    <TableColumn fx:id="catNameColumn" text="اسم الصنف" prefWidth="280"/>
-                    <TableColumn fx:id="catSectionColumn" text="القسم" prefWidth="200"/>
-                    <TableColumn fx:id="catPriceColumn" text="السعر" prefWidth="150"/>
-                </columns>
-                <placeholder>
-                    <Label text="اختر مورداً لعرض الكتالوج" style="-fx-font-size: 14px;"/>
-                </placeholder>
-            </TableView>
-        </VBox>
-        
+
         <!-- ==================== إدارة علاقة Item-Vendor ==================== -->
         <VBox spacing="15" styleClass="scenario-section">
             <padding>
                 <Insets top="20" right="20" bottom="20" left="20"/>
             </padding>
-            
-            <Label text="إدارة العلاقات: ربط الأصناف بالموردين" 
+
+            <Label text="إدارة العلاقات: ربط الأصناف بالموردين"
                    styleClass="scenario-title"/>
-            <Label text="أضف أو أزل موردين من صنف معين" 
+            <Label text="أضف أو أزل موردين من صنف معين"
                    style="-fx-font-size: 13px; -fx-text-fill: #6b7280;"/>
-            
+
             <GridPane hgap="15" vgap="15">
                 <columnConstraints>
                     <ColumnConstraints minWidth="120" prefWidth="150"/>
                     <ColumnConstraints minWidth="250" prefWidth="350"/>
                 </columnConstraints>
-                
+
                 <Label text="اختر الصنف:" GridPane.columnIndex="0" GridPane.rowIndex="0"
                       style="-fx-font-weight: bold;"/>
-                <ComboBox fx:id="manageItemComboBox" promptText="اختر صنف" 
+                <ComboBox fx:id="manageItemComboBox" promptText="اختر صنف"
                          GridPane.columnIndex="1" GridPane.rowIndex="0" maxWidth="Infinity"/>
-                
+
                 <Label text="اختر المورد:" GridPane.columnIndex="0" GridPane.rowIndex="1"
                       style="-fx-font-weight: bold;"/>
-                <ComboBox fx:id="manageVendorComboBox" promptText="اختر مورد للإضافة" 
+                <ComboBox fx:id="manageVendorComboBox" promptText="اختر مورد للإضافة"
                          GridPane.columnIndex="1" GridPane.rowIndex="1" maxWidth="Infinity"/>
+
+                <Label text="سعر التوريد:" GridPane.columnIndex="0" GridPane.rowIndex="2"
+                      style="-fx-font-weight: bold;"/>
+                <TextField fx:id="supplyPriceField" promptText="أدخل سعر التوريد"
+                         GridPane.columnIndex="1" GridPane.rowIndex="2" maxWidth="Infinity"/>
             </GridPane>
-            
+
             <HBox spacing="15" alignment="CENTER_LEFT">
-                <Button text="➕ إضافة مورد للصنف" onAction="#handleAddVendorToItem" 
+                <Button text="➕ إضافة مورد للصنف" onAction="#handleAddVendorToItem"
                        styleClass="success-button" prefWidth="170"/>
-                <Button text="➖ إزالة مورد من الصنف" onAction="#handleRemoveVendorFromItem" 
+                <Button text="➖ إزالة مورد من الصنف" onAction="#handleRemoveVendorFromItem"
                        styleClass="danger-button" prefWidth="170"/>
             </HBox>
-            
+
             <VBox spacing="10">
-                <Label text="الموردون الحاليون للصنف المختار:" 
+                <Label text="الموردون الحاليون للصنف المختار:"
                       style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
-                <ListView fx:id="currentVendorsListView" prefHeight="150" 
+                <ListView fx:id="currentVendorsListView" prefHeight="150"
                          styleClass="data-table">
                     <placeholder>
-                        <Label text="اختر صنفاً لعرض مورديه" 
+                        <Label text="اختر صنفاً لعرض مورديه"
                               style="-fx-font-size: 13px; -fx-text-fill: #9ca3af;"/>
                     </placeholder>
                 </ListView>
             </VBox>
         </VBox>
-        
+
     </VBox>
 </ScrollPane>

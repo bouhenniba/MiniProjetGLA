@@ -80,9 +80,6 @@
                 <configuration>
                     <source>21</source>
                     <target>21</target>
-                    <compilerArgs>
-                        <arg>--enable-preview</arg>
-                    </compilerArgs>
                 </configuration>
             </plugin>
             
@@ -93,9 +90,6 @@
                 <version>0.0.8</version>
                 <configuration>
                     <mainClass>com.mycompany.hanoutimanagementsystem.ui.HanoutiApplication</mainClass>
-                    <options>
-                        <option>--enable-preview</option>
-                    </options>
                 </configuration>
             </plugin>
         </plugins>

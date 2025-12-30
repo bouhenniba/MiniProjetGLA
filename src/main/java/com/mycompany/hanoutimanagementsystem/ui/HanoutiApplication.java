@@ -64,9 +64,7 @@ public class HanoutiApplication extends Application {
             } else if (controller instanceof VendorsViewController) {
                 ((VendorsViewController) controller).setController(vendorController);
             } else if (controller instanceof OperationsViewController) {
-                // ✅ حقن المتحكمات ثم استدعاء initialize
-                OperationsViewController opsController = (OperationsViewController) controller;
-                opsController.setControllers(itemController, sectionController, vendorController);
+                ((OperationsViewController) controller).setControllers(itemController, sectionController, vendorController);
             }
             
             return controller;

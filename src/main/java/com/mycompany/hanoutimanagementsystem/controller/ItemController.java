@@ -6,6 +6,7 @@ import com.mycompany.hanoutimanagementsystem.dao.InterfaceVendorDAO;
 import com.mycompany.hanoutimanagementsystem.model.Item;
 import com.mycompany.hanoutimanagementsystem.model.Section;
 import com.mycompany.hanoutimanagementsystem.model.Vendor;
+import com.mycompany.hanoutimanagementsystem.model.SupplyContract;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -66,9 +67,9 @@ public class ItemController {
     // ================= Vendor Management =================
 
     /**
-     * ✅ ربط صنف بمورد (إضافة مورد لصنف) - محسّن
+     * ✅ ربط صنف بمورد (إضافة مورد لصنف) - محسّن مع السعر
      */
-    public void addVendorToItem(Long itemSku, String vendorLicense) {
+    public void addVendorToItem(Long itemSku, String vendorLicense, BigDecimal supplyPrice) {
         // ✅ استخدام findBySku المحسّن الذي يحمّل الموردين
         Item item = itemDAO.findBySku(itemSku);
         Vendor vendor = vendorDAO.findByLicense(vendorLicense);
@@ -81,20 +82,25 @@ public class ItemController {
         }
         
         // ✅ التحقق من عدم وجود علاقة مسبقة
-        if (item.getVendors().contains(vendor)) {
+        boolean exists = item.getVendorSupplies().stream()
+                .anyMatch(sc -> sc.getVendor().getLicenseNumber().equals(vendorLicense));
+        
+        if (exists) {
             throw new IllegalArgumentException(
                 "Vendor already linked to this item"
             );
         }
         
-        // ✅ إضافة العلاقة في كلا الاتجاهين
-        item.addVendor(vendor);
+        // ✅ إنشاء عقد توريد جديد
+        SupplyContract contract = new SupplyContract(item, vendor, supplyPrice);
+        item.getVendorSupplies().add(contract);
+        vendor.getProvidedItems().add(contract);
         
         // ✅ حفظ التغييرات
         itemDAO.update(item);
-        
-        System.out.println("✅ تم ربط المورد " + vendorLicense + 
-                         " بالصنف " + itemSku + " بنجاح");
+
+        System.out.println("✅ تم ربط المورد " + vendorLicense +
+                         " بالصنف " + itemSku + " بسعر " + supplyPrice + " بنجاح");
     }
 
     /**
@@ -102,23 +108,29 @@ public class ItemController {
      */
     public void removeVendorFromItem(Long itemSku, String vendorLicense) {
         Item item = itemDAO.findBySku(itemSku);
-        Vendor vendor = vendorDAO.findByLicense(vendorLicense);
-        
-        if (item == null || vendor == null) {
-            throw new IllegalArgumentException("Item or Vendor not found");
+
+        if (item == null) {
+            throw new IllegalArgumentException("Item not found");
         }
         
-        // ✅ التحقق من وجود علاقة
-        if (!item.getVendors().contains(vendor)) {
+        // ✅ البحث عن العقد وحذفه
+        SupplyContract contractToRemove = item.getVendorSupplies().stream()
+                .filter(sc -> sc.getVendor().getLicenseNumber().equals(vendorLicense))
+                .findFirst()
+                .orElse(null);
+
+        if (contractToRemove == null) {
             throw new IllegalArgumentException(
                 "Vendor is not linked to this item"
             );
         }
         
-        item.removeVendor(vendor);
-        itemDAO.update(item);
+        item.getVendorSupplies().remove(contractToRemove);
+        contractToRemove.getVendor().getProvidedItems().remove(contractToRemove);
         
-        System.out.println("✅ تم إزالة المورد " + vendorLicense + 
+        itemDAO.update(item);
+
+        System.out.println("✅ تم إزالة المورد " + vendorLicense +
                          " من الصنف " + itemSku);
     }
 
@@ -137,15 +149,15 @@ public class ItemController {
     public List<Item> getItemsByVendor(String licenseNumber) {
         return itemDAO.findByVendor(licenseNumber);
     }
-    
+
     /**
      * ✅ التحقق من العلاقة بين صنف ومورد
      */
     public boolean isVendorLinkedToItem(Long itemSku, String vendorLicense) {
         Item item = itemDAO.findBySku(itemSku);
         if (item == null) return false;
-        
-        return item.getVendors().stream()
-            .anyMatch(v -> v.getLicenseNumber().equals(vendorLicense));
+
+        return item.getVendorSupplies().stream()
+            .anyMatch(sc -> sc.getVendor().getLicenseNumber().equals(vendorLicense));
     }
 }
