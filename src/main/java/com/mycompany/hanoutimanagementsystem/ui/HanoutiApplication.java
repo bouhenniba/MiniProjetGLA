@@ -8,6 +8,9 @@ import javafx.stage.Stage;
 import com.mycompany.hanoutimanagementsystem.controller.*;
 import com.mycompany.hanoutimanagementsystem.dao.*;
 
+/**
+ * ✅ تطبيق JavaFX الرئيسي مع Dependency Injection صحيح
+ */
 public class HanoutiApplication extends Application {
     
     private ItemController itemController;
@@ -16,13 +19,13 @@ public class HanoutiApplication extends Application {
     
     @Override
     public void start(Stage primaryStage) throws Exception {
-        // تهيئة الـ DAOs
+        // ✅ تهيئة الـ DAOs
         ItemDAO itemDAO = new ItemDAO();
         SectionDAO sectionDAO = new SectionDAO();
         VendorDAO vendorDAO = new VendorDAO();
         
-        // تهيئة المتحكمات
-        itemController = new ItemController(itemDAO, sectionDAO);
+        // ✅ تهيئة المتحكمات مع جميع Dependencies
+        itemController = new ItemController(itemDAO, sectionDAO, vendorDAO);
         sectionController = new SectionController(sectionDAO);
         vendorController = new VendorController(vendorDAO, itemDAO);
         
@@ -43,6 +46,9 @@ public class HanoutiApplication extends Application {
         primaryStage.show();
     }
     
+    /**
+     * ✅ Factory لإنشاء Controllers مع حقن Dependencies
+     */
     private Object createController(Class<?> controllerClass) {
         try {
             if (controllerClass == MainViewController.class) {
@@ -58,7 +64,9 @@ public class HanoutiApplication extends Application {
             } else if (controller instanceof VendorsViewController) {
                 ((VendorsViewController) controller).setController(vendorController);
             } else if (controller instanceof OperationsViewController) {
-                ((OperationsViewController) controller).setControllers(itemController, sectionController, vendorController);
+                // ✅ حقن المتحكمات ثم استدعاء initialize
+                OperationsViewController opsController = (OperationsViewController) controller;
+                opsController.setControllers(itemController, sectionController, vendorController);
             }
             
             return controller;
@@ -66,6 +74,13 @@ public class HanoutiApplication extends Application {
         } catch (Exception e) {
             throw new RuntimeException("Failed to create controller: " + controllerClass.getName(), e);
         }
+    }
+    
+    @Override
+    public void stop() throws Exception {
+        // ✅ إغلاق EntityManagerFactory عند إيقاف التطبيق
+        com.mycompany.hanoutimanagementsystem.util.JPAUtil.closeEntityManagerFactory();
+        super.stop();
     }
     
     public static void main(String[] args) {

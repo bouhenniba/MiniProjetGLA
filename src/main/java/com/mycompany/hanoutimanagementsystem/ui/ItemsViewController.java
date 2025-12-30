@@ -6,73 +6,58 @@ import javafx.collections.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import com.mycompany.hanoutimanagementsystem.model.*;
 import com.mycompany.hanoutimanagementsystem.controller.*;
+import java.math.BigDecimal;
 
-/**
- * متحكم واجهة إدارة الأصناف
- * يتعامل مع العمليات: إضافة، تحديث، حذف، بحث
- */
 public class ItemsViewController {
     
-    // حقول الإدخال
     @FXML private TextField skuField;
     @FXML private TextField nameField;
     @FXML private TextField stockField;
+    @FXML private TextField priceField; // ✅ حقل السعر الجديد
     @FXML private ComboBox<Section> sectionComboBox;
     
-    // البحث والفلترة
     @FXML private TextField searchField;
     @FXML private ComboBox<Section> filterSectionComboBox;
     
-    // الجدول والأعمدة
     @FXML private TableView<Item> itemsTable;
-    @FXML private TableColumn<Item, Integer> skuColumn;
+    @FXML private TableColumn<Item, Long> skuColumn;
     @FXML private TableColumn<Item, String> nameColumn;
     @FXML private TableColumn<Item, Integer> stockColumn;
+    @FXML private TableColumn<Item, BigDecimal> priceColumn; // ✅ عمود السعر
     @FXML private TableColumn<Item, String> sectionColumn;
     
-    // الأزرار
     @FXML private Button addButton;
     @FXML private Button updateButton;
     @FXML private Button deleteButton;
     
-    // المتحكمات الخلفية
     private ItemController itemController;
     private SectionController sectionController;
     
-    // القوائم المرصودة
     private ObservableList<Item> itemsList;
+    private ObservableList<Item> allItems;
     private ObservableList<Section> sectionsList;
     
-    /**
-     * تعيين المتحكمات الخلفية
-     * ✅ لا تستدعي initialize() هنا!
-     */
     public void setControllers(ItemController itemController, SectionController sectionController) {
         this.itemController = itemController;
         this.sectionController = sectionController;
     }
     
-    /**
-     * ✅ JavaFX تستدعي هذه الدالة تلقائياً بعد حقن @FXML fields
-     */
     @FXML
     public void initialize() {
-        // انتظر حتى يتم حقن المتحكمات
         if (itemController == null || sectionController == null) {
             return;
         }
         
-        // إعداد الأعمدة
         skuColumn.setCellValueFactory(new PropertyValueFactory<>("sku"));
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         stockColumn.setCellValueFactory(new PropertyValueFactory<>("stock"));
+        priceColumn.setCellValueFactory(new PropertyValueFactory<>("price")); // ✅
         sectionColumn.setCellValueFactory(cellData -> 
             new javafx.beans.property.SimpleStringProperty(
                 cellData.getValue().getSection().getLabel()
             )
         );
         
-        // تهيئة القوائم
         itemsList = FXCollections.observableArrayList();
         sectionsList = FXCollections.observableArrayList();
         
@@ -80,15 +65,17 @@ public class ItemsViewController {
         sectionComboBox.setItems(sectionsList);
         filterSectionComboBox.setItems(sectionsList);
         
-        // تحميل البيانات الأولية
         loadSections();
         loadItems();
         
-        // التحقق من الحقول الرقمية فقط
         addNumericValidation(skuField);
         addNumericValidation(stockField);
+        addDecimalValidation(priceField); // ✅
         
-        // تحديد صنف عند النقر على الجدول
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+            filterItems(newValue);
+        });
+        
         itemsTable.getSelectionModel().selectedItemProperty().addListener(
             (obs, oldSelection, newSelection) -> {
                 if (newSelection != null) {
@@ -98,13 +85,9 @@ public class ItemsViewController {
         );
     }
     
-    /**
-     * إضافة صنف جديد
-     */
     @FXML
     private void handleAdd() {
         try {
-            // التحقق من الحقول
             if (!validateFields()) {
                 showError("خطأ في البيانات", "يرجى ملء جميع الحقول بشكل صحيح");
                 return;
@@ -112,36 +95,29 @@ public class ItemsViewController {
             
             Section selectedSection = sectionComboBox.getValue();
             if (selectedSection == null) {
-                showError("خطأ", "يجب اختيار قسم (علاقة إجبارية)");
+                showError("خطأ", "يجب اختيار قسم");
                 return;
             }
             
-            // استخدام Factory Method من القسم لإنشاء الصنف
             Long sku = Long.parseLong(skuField.getText());
             String name = nameField.getText();
             int stock = Integer.parseInt(stockField.getText());
+            BigDecimal price = new BigDecimal(priceField.getText()); // ✅
             
-            Item newItem = selectedSection.addItem(sku, name, stock);
+            itemController.createItem(sku, name, stock, price, selectedSection.getCode());
             
-            // حفظ في قاعدة البيانات عبر المتحكم
-            itemController.createItem(sku, name, stock, selectedSection.getCode());
-            
-            // تحديث القائمة المرصودة
-            itemsList.add(newItem);
-            
+            loadItems();
             showSuccess("تم الإضافة بنجاح");
             handleClear();
             
         } catch (NumberFormatException e) {
-            showError("خطأ", "SKU والكمية يجب أن تكون أرقاماً");
+            showError("خطأ", "SKU والكمية والسعر يجب أن تكون أرقام صحيحة");
         } catch (Exception e) {
             showError("خطأ", "فشلت عملية الإضافة: " + e.getMessage());
+            e.printStackTrace();
         }
     }
     
-    /**
-     * تحديث صنف موجود
-     */
     @FXML
     private void handleUpdate() {
         Item selectedItem = itemsTable.getSelectionModel().getSelectedItem();
@@ -156,19 +132,17 @@ public class ItemsViewController {
                 return;
             }
             
-            // تحديث البيانات
             selectedItem.setName(nameField.getText());
             selectedItem.setStock(Integer.parseInt(stockField.getText()));
+            selectedItem.setPrice(new BigDecimal(priceField.getText())); // ✅
             
             Section newSection = sectionComboBox.getValue();
             if (newSection != null && !newSection.equals(selectedItem.getSection())) {
                 selectedItem.setSection(newSection);
             }
             
-            // حفظ التحديث في قاعدة البيانات
             itemController.updateItem(selectedItem);
             
-            // تحديث الجدول
             itemsTable.refresh();
             
             showSuccess("تم التحديث بنجاح");
@@ -179,9 +153,6 @@ public class ItemsViewController {
         }
     }
     
-    /**
-     * حذف صنف
-     */
     @FXML
     private void handleDelete() {
         Item selectedItem = itemsTable.getSelectionModel().getSelectedItem();
@@ -198,6 +169,7 @@ public class ItemsViewController {
         if (confirmAlert.showAndWait().get() == ButtonType.OK) {
             try {
                 itemController.deleteItem(selectedItem.getSku());
+                allItems.remove(selectedItem);
                 itemsList.remove(selectedItem);
                 showSuccess("تم الحذف بنجاح");
                 handleClear();
@@ -207,47 +179,28 @@ public class ItemsViewController {
         }
     }
     
-    /**
-     * البحث النصي
-     */
     @FXML
     private void handleSearch() {
-        String searchTerm = searchField.getText().toLowerCase();
-        if (searchTerm.isEmpty()) {
-            loadItems();
-            return;
-        }
-        
-        ObservableList<Item> filteredList = FXCollections.observableArrayList();
-        for (Item item : itemController.getAllItems()) {
-            if (item.getName().toLowerCase().contains(searchTerm) ||
-                String.valueOf(item.getSku()).contains(searchTerm)) {
-                filteredList.add(item);
-            }
-        }
-        itemsTable.setItems(filteredList);
+        filterItems(searchField.getText());
     }
     
-    /**
-     * فلترة حسب القسم
-     */
     @FXML
     private void handleFilterBySection() {
         Section selectedSection = filterSectionComboBox.getValue();
         if (selectedSection == null) {
-            loadItems();
+            itemsList.setAll(allItems);
             return;
         }
         
-        ObservableList<Item> filteredList = FXCollections.observableArrayList(
-            itemController.getItemsBySection(selectedSection.getCode())
-        );
-        itemsTable.setItems(filteredList);
+        ObservableList<Item> filteredList = FXCollections.observableArrayList();
+        for (Item item : allItems) {
+            if (item.getSection().getCode().equals(selectedSection.getCode())) {
+                filteredList.add(item);
+            }
+        }
+        itemsList.setAll(filteredList);
     }
     
-    /**
-     * إعادة تحميل البيانات
-     */
     @FXML
     private void handleRefresh() {
         loadItems();
@@ -256,23 +209,42 @@ public class ItemsViewController {
         filterSectionComboBox.setValue(null);
     }
     
-    /**
-     * مسح الحقول
-     */
     @FXML
     private void handleClear() {
         skuField.clear();
         nameField.clear();
         stockField.clear();
+        priceField.clear(); // ✅
         sectionComboBox.setValue(null);
         itemsTable.getSelectionModel().clearSelection();
+        searchField.clear();
+        filterSectionComboBox.setValue(null);
+        filterItems("");
     }
     
-    // ===== دوال مساعدة =====
+    private void filterItems(String searchTerm) {
+        if (searchTerm == null || searchTerm.trim().isEmpty()) {
+            itemsList.setAll(allItems);
+            return;
+        }
+        
+        String lowerCaseFilter = searchTerm.toLowerCase().trim();
+        ObservableList<Item> filteredList = FXCollections.observableArrayList();
+        
+        for (Item item : allItems) {
+            if (item.getName().toLowerCase().contains(lowerCaseFilter) ||
+                String.valueOf(item.getSku()).contains(lowerCaseFilter)) {
+                filteredList.add(item);
+            }
+        }
+        
+        itemsList.setAll(filteredList);
+    }
     
     private void loadItems() {
+        allItems = FXCollections.observableArrayList(itemController.getAllItems());
         itemsList.clear();
-        itemsList.addAll(itemController.getAllItems());
+        itemsList.addAll(allItems);
     }
     
     private void loadSections() {
@@ -284,18 +256,29 @@ public class ItemsViewController {
         skuField.setText(String.valueOf(item.getSku()));
         nameField.setText(item.getName());
         stockField.setText(String.valueOf(item.getStock()));
+        priceField.setText(item.getPrice() != null ? item.getPrice().toString() : "0"); // ✅
         sectionComboBox.setValue(item.getSection());
     }
     
     private boolean validateFields() {
         return !skuField.getText().isEmpty() &&
                !nameField.getText().isEmpty() &&
-               !stockField.getText().isEmpty();
+               !stockField.getText().isEmpty() &&
+               !priceField.getText().isEmpty(); // ✅
     }
     
     private void addNumericValidation(TextField field) {
         field.textProperty().addListener((obs, oldValue, newValue) -> {
             if (!newValue.matches("\\d*")) {
+                field.setText(oldValue);
+            }
+        });
+    }
+    
+    // ✅ Validation للأرقام العشرية (السعر)
+    private void addDecimalValidation(TextField field) {
+        field.textProperty().addListener((obs, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*\\.?\\d*")) {
                 field.setText(oldValue);
             }
         });

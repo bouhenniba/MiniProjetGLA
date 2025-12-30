@@ -20,10 +20,8 @@ public class SectionsViewController {
     
     private SectionController sectionController;
     private ObservableList<Section> sectionsList;
+    private ObservableList<Section> allSections; // ✅ قائمة شاملة للبحث
     
-    /**
-     * ✅ لا تستدعي initialize() هنا
-     */
     public void setController(SectionController sectionController) {
         this.sectionController = sectionController;
     }
@@ -44,6 +42,11 @@ public class SectionsViewController {
         sectionsTable.setItems(sectionsList);
         
         loadSections();
+        
+        // ✅ إضافة Listener للبحث التلقائي
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+            filterSections(newValue);
+        });
         
         sectionsTable.getSelectionModel().selectedItemProperty().addListener(
             (obs, oldSelection, newSelection) -> {
@@ -68,6 +71,7 @@ public class SectionsViewController {
             sectionController.createSection(code, label);
             
             Section newSection = new Section(code, label);
+            allSections.add(newSection); // ✅ إضافة للقائمة الشاملة
             sectionsList.add(newSection);
             
             showSuccess("تم إضافة القسم بنجاح");
@@ -125,6 +129,7 @@ public class SectionsViewController {
         if (confirmAlert.showAndWait().get() == ButtonType.OK) {
             try {
                 sectionController.deleteSection(selectedSection.getCode());
+                allSections.remove(selectedSection); // ✅ حذف من القائمة الشاملة
                 sectionsList.remove(selectedSection);
                 showSuccess("تم الحذف بنجاح");
                 handleClear();
@@ -136,20 +141,7 @@ public class SectionsViewController {
     
     @FXML
     private void handleSearch() {
-        String searchTerm = searchField.getText().toLowerCase();
-        if (searchTerm.isEmpty()) {
-            loadSections();
-            return;
-        }
-        
-        ObservableList<Section> filteredList = FXCollections.observableArrayList();
-        for (Section section : sectionController.getAllSections()) {
-            if (section.getCode().toLowerCase().contains(searchTerm) ||
-                section.getLabel().toLowerCase().contains(searchTerm)) {
-                filteredList.add(section);
-            }
-        }
-        sectionsTable.setItems(filteredList);
+        filterSections(searchField.getText());
     }
     
     @FXML
@@ -163,11 +155,36 @@ public class SectionsViewController {
         codeField.clear();
         labelField.clear();
         sectionsTable.getSelectionModel().clearSelection();
+        searchField.clear();
+        filterSections(""); // ✅ عرض الكل
+    }
+    
+    // ✅ دالة الفلترة الصحيحة - تستخدم setAll بدلاً من setItems
+    private void filterSections(String searchTerm) {
+        if (searchTerm == null || searchTerm.trim().isEmpty()) {
+            sectionsList.setAll(allSections); // ✅ استرجاع كل البيانات
+            return;
+        }
+        
+        String lowerCaseFilter = searchTerm.toLowerCase().trim();
+        ObservableList<Section> filteredList = FXCollections.observableArrayList();
+        
+        for (Section section : allSections) {
+            if (section.getCode().toLowerCase().contains(lowerCaseFilter) ||
+                section.getLabel().toLowerCase().contains(lowerCaseFilter)) {
+                filteredList.add(section);
+            }
+        }
+        
+        sectionsList.setAll(filteredList); // ✅ تحديث المحتوى فقط
     }
     
     private void loadSections() {
+        allSections = FXCollections.observableArrayList(
+            sectionController.getAllSections()
+        );
         sectionsList.clear();
-        sectionsList.addAll(sectionController.getAllSections());
+        sectionsList.addAll(allSections);
     }
     
     private void populateFields(Section section) {

@@ -11,56 +11,88 @@ public class VendorDAO implements InterfaceVendorDAO {
     @Override
     public void create(Vendor vendor) {
         EntityManager em = JPAUtil.getEntityManager();
-        em.getTransaction().begin();
-        em.persist(vendor);
-        em.getTransaction().commit();
-        em.close();
+        try {
+            em.getTransaction().begin();
+            em.persist(vendor);
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
     }
 
     @Override
     public void update(Vendor vendor) {
         EntityManager em = JPAUtil.getEntityManager();
-        em.getTransaction().begin();
-        em.merge(vendor);
-        em.getTransaction().commit();
-        em.close();
+        try {
+            em.getTransaction().begin();
+            em.merge(vendor);
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
     }
 
     @Override
     public void delete(String licenseNumber) {
         EntityManager em = JPAUtil.getEntityManager();
-        em.getTransaction().begin();
-        Vendor vendor = em.find(Vendor.class, licenseNumber);
-        if (vendor != null) em.remove(vendor);
-        em.getTransaction().commit();
-        em.close();
+        try {
+            em.getTransaction().begin();
+            Vendor vendor = em.find(Vendor.class, licenseNumber);
+            if (vendor != null) em.remove(vendor);
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
     }
 
     @Override
     public Vendor findByLicense(String licenseNumber) {
         EntityManager em = JPAUtil.getEntityManager();
-        Vendor vendor = em.find(Vendor.class, licenseNumber);
-        em.close();
-        return vendor;
+        try {
+            // ✅ تحميل المورد مع الأصناف المرتبطة
+            TypedQuery<Vendor> query = em.createQuery(
+                "SELECT DISTINCT v FROM Vendor v " +
+                "LEFT JOIN FETCH v.items " +
+                "WHERE v.licenseNumber = :license",
+                Vendor.class
+            );
+            query.setParameter("license", licenseNumber);
+            List<Vendor> results = query.getResultList();
+            return results.isEmpty() ? null : results.get(0);
+        } finally {
+            em.close();
+        }
     }
 
     @Override
     public List<Vendor> findAll() {
         EntityManager em = JPAUtil.getEntityManager();
-        TypedQuery<Vendor> query = em.createQuery("SELECT v FROM Vendor v", Vendor.class);
-        List<Vendor> vendors = query.getResultList();
-        em.close();
-        return vendors;
+        try {
+            // ✅ تحميل الأصناف مع الموردين
+            return em.createQuery(
+                "SELECT DISTINCT v FROM Vendor v LEFT JOIN FETCH v.items", 
+                Vendor.class
+            ).getResultList();
+        } finally {
+            em.close();
+        }
     }
 
     @Override
     public List<Vendor> findByItemSku(Long sku) {
         EntityManager em = JPAUtil.getEntityManager();
-        TypedQuery<Vendor> query = em.createQuery(
-            "SELECT v FROM Vendor v JOIN v.items i WHERE i.sku = :sku", Vendor.class);
-        query.setParameter("sku", sku);
-        List<Vendor> vendors = query.getResultList();
-        em.close();
-        return vendors;
+        try {
+            // ✅ تحميل الموردين مع أصنافهم
+            TypedQuery<Vendor> query = em.createQuery(
+                "SELECT DISTINCT v FROM Vendor v " +
+                "LEFT JOIN FETCH v.items i " +
+                "WHERE i.sku = :sku",
+                Vendor.class
+            );
+            query.setParameter("sku", sku);
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
     }
 }

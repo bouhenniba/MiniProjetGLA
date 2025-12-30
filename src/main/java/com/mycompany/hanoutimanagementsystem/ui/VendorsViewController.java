@@ -20,10 +20,8 @@ public class VendorsViewController {
     
     private VendorController vendorController;
     private ObservableList<Vendor> vendorsList;
+    private ObservableList<Vendor> allVendors; // âœ… Ù‚Ø§Ø¦Ù…Ø© Ù„Ø­ÙØ¸ Ø¬Ù…ÙŠØ¹ Ø§Ù„Ù…ÙˆØ±Ø¯ÙŠÙ†
     
-    /**
-     * ✅ لا تستدعي initialize() هنا
-     */
     public void setController(VendorController vendorController) {
         this.vendorController = vendorController;
     }
@@ -45,6 +43,11 @@ public class VendorsViewController {
         
         loadVendors();
         
+        // âœ… Ø¥Ø¶Ø§ÙØ© Listener Ù„Ø­Ù‚Ù„ Ø§Ù„Ø¨Ø­Ø«
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+            filterVendors(newValue);
+        });
+        
         vendorsTable.getSelectionModel().selectedItemProperty().addListener(
             (obs, oldSelection, newSelection) -> {
                 if (newSelection != null) {
@@ -58,7 +61,7 @@ public class VendorsViewController {
     private void handleAdd() {
         try {
             if (!validateFields()) {
-                showError("خطأ", "يرجى ملء جميع الحقول");
+                showError("Ø®Ø·Ø£", "ÙŠØ±Ø¬Ù‰ Ù…Ù„Ø¡ Ø¬Ù…ÙŠØ¹ Ø§Ù„Ø­Ù‚ÙˆÙ„");
                 return;
             }
             
@@ -68,13 +71,14 @@ public class VendorsViewController {
             vendorController.createVendor(license, contact);
             
             Vendor newVendor = new Vendor(license, contact);
+            allVendors.add(newVendor); // âœ… Ø¥Ø¶Ø§ÙØ© Ù„Ù„Ù‚Ø§Ø¦Ù…Ø© Ø§Ù„ÙƒØ§Ù…Ù„Ø©
             vendorsList.add(newVendor);
             
-            showSuccess("تم إضافة المورد بنجاح");
+            showSuccess("ØªÙ… Ø¥Ø¶Ø§ÙØ© Ø§Ù„Ù…ÙˆØ±Ø¯ Ø¨Ù†Ø¬Ø§Ø­");
             handleClear();
             
         } catch (Exception e) {
-            showError("خطأ", "فشلت عملية الإضافة: " + e.getMessage());
+            showError("Ø®Ø·Ø£", "ÙØ´Ù„Øª Ø¹Ù…Ù„ÙŠØ© Ø§Ù„Ø¥Ø¶Ø§ÙØ©: " + e.getMessage());
         }
     }
     
@@ -82,13 +86,13 @@ public class VendorsViewController {
     private void handleUpdate() {
         Vendor selectedVendor = vendorsTable.getSelectionModel().getSelectedItem();
         if (selectedVendor == null) {
-            showError("خطأ", "يرجى اختيار مورد للتحديث");
+            showError("Ø®Ø·Ø£", "ÙŠØ±Ø¬Ù‰ Ø§Ø®ØªÙŠØ§Ø± Ù…ÙˆØ±Ø¯ Ù„Ù„ØªØ­Ø¯ÙŠØ«");
             return;
         }
         
         try {
             if (!validateFields()) {
-                showError("خطأ", "يرجى ملء جميع الحقول");
+                showError("Ø®Ø·Ø£", "ÙŠØ±Ø¬Ù‰ Ù…Ù„Ø¡ Ø¬Ù…ÙŠØ¹ Ø§Ù„Ø­Ù‚ÙˆÙ„");
                 return;
             }
             
@@ -96,11 +100,11 @@ public class VendorsViewController {
             vendorController.updateVendor(selectedVendor);
             vendorsTable.refresh();
             
-            showSuccess("تم تحديث المورد بنجاح");
+            showSuccess("ØªÙ… ØªØ­Ø¯ÙŠØ« Ø§Ù„Ù…ÙˆØ±Ø¯ Ø¨Ù†Ø¬Ø§Ø­");
             handleClear();
             
         } catch (Exception e) {
-            showError("خطأ", "فشلت عملية التحديث: " + e.getMessage());
+            showError("Ø®Ø·Ø£", "ÙØ´Ù„Øª Ø¹Ù…Ù„ÙŠØ© Ø§Ù„ØªØ­Ø¯ÙŠØ«: " + e.getMessage());
         }
     }
     
@@ -108,43 +112,31 @@ public class VendorsViewController {
     private void handleDelete() {
         Vendor selectedVendor = vendorsTable.getSelectionModel().getSelectedItem();
         if (selectedVendor == null) {
-            showError("خطأ", "يرجى اختيار مورد للحذف");
+            showError("Ø®Ø·Ø£", "ÙŠØ±Ø¬Ù‰ Ø§Ø®ØªÙŠØ§Ø± Ù…ÙˆØ±Ø¯ Ù„Ù„Ø­Ø°Ù");
             return;
         }
         
         Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmAlert.setTitle("تأكيد الحذف");
-        confirmAlert.setHeaderText("هل أنت متأكد من حذف هذا المورد؟");
+        confirmAlert.setTitle("ØªØ£ÙƒÙŠØ¯ Ø§Ù„Ø­Ø°Ù");
+        confirmAlert.setHeaderText("Ù‡Ù„ Ø£Ù†Øª Ù…ØªØ£ÙƒØ¯ Ù…Ù† Ø­Ø°Ù Ù‡Ø°Ø§ Ø§Ù„Ù…ÙˆØ±Ø¯ØŸ");
         confirmAlert.setContentText(selectedVendor.getContactName());
         
         if (confirmAlert.showAndWait().get() == ButtonType.OK) {
             try {
                 vendorController.deleteVendor(selectedVendor.getLicenseNumber());
+                allVendors.remove(selectedVendor); // âœ… Ø­Ø°Ù Ù…Ù† Ø§Ù„Ù‚Ø§Ø¦Ù…Ø© Ø§Ù„ÙƒØ§Ù…Ù„Ø©
                 vendorsList.remove(selectedVendor);
-                showSuccess("تم الحذف بنجاح");
+                showSuccess("ØªÙ… Ø§Ù„Ø­Ø°Ù Ø¨Ù†Ø¬Ø§Ø­");
                 handleClear();
             } catch (Exception e) {
-                showError("خطأ", "فشلت عملية الحذف: " + e.getMessage());
+                showError("Ø®Ø·Ø£", "ÙØ´Ù„Øª Ø¹Ù…Ù„ÙŠØ© Ø§Ù„Ø­Ø°Ù: " + e.getMessage());
             }
         }
     }
     
     @FXML
     private void handleSearch() {
-        String searchTerm = searchField.getText().toLowerCase();
-        if (searchTerm.isEmpty()) {
-            loadVendors();
-            return;
-        }
-        
-        ObservableList<Vendor> filteredList = FXCollections.observableArrayList();
-        for (Vendor vendor : vendorController.getAllVendors()) {
-            if (vendor.getLicenseNumber().toLowerCase().contains(searchTerm) ||
-                vendor.getContactName().toLowerCase().contains(searchTerm)) {
-                filteredList.add(vendor);
-            }
-        }
-        vendorsTable.setItems(filteredList);
+        filterVendors(searchField.getText());
     }
     
     @FXML
@@ -158,11 +150,34 @@ public class VendorsViewController {
         licenseField.clear();
         contactField.clear();
         vendorsTable.getSelectionModel().clearSelection();
+        searchField.clear();
+        filterVendors(""); // âœ… Ø¹Ø±Ø¶ Ø§Ù„ÙƒÙ„
+    }
+    
+    // âœ… Ø¯Ø§Ù„Ø© Ø¬Ø¯ÙŠØ¯Ø© Ù„Ù„ÙÙ„ØªØ±Ø©
+    private void filterVendors(String searchTerm) {
+        if (searchTerm == null || searchTerm.trim().isEmpty()) {
+            vendorsList.setAll(allVendors);
+            return;
+        }
+        
+        String lowerCaseFilter = searchTerm.toLowerCase().trim();
+        ObservableList<Vendor> filteredList = FXCollections.observableArrayList();
+        
+        for (Vendor vendor : allVendors) {
+            if (vendor.getLicenseNumber().toLowerCase().contains(lowerCaseFilter) ||
+                vendor.getContactName().toLowerCase().contains(lowerCaseFilter)) {
+                filteredList.add(vendor);
+            }
+        }
+        
+        vendorsList.setAll(filteredList);
     }
     
     private void loadVendors() {
+        allVendors = FXCollections.observableArrayList(vendorController.getAllVendors());
         vendorsList.clear();
-        vendorsList.addAll(vendorController.getAllVendors());
+        vendorsList.addAll(allVendors);
     }
     
     private void populateFields(Vendor vendor) {
@@ -176,7 +191,7 @@ public class VendorsViewController {
     
     private void showSuccess(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("نجاح");
+        alert.setTitle("Ù†Ø¬Ø§Ø­");
         alert.setContentText(message);
         alert.showAndWait();
     }

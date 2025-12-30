@@ -45,13 +45,18 @@ public class SectionDAO implements InterfaceSectionDAO {
     }
 
     @Override
-    public List<Section> findAll() {
-        EntityManager em = JPAUtil.getEntityManager();
-        TypedQuery<Section> query = em.createQuery("SELECT s FROM Section s", Section.class);
-        List<Section> sections = query.getResultList();
+  public List<Section> findAll() {
+    EntityManager em = JPAUtil.getEntityManager();
+    try {
+        // âœ… ØªØ­Ù…ÙŠÙ„ Ø§Ù„Ø£ØµÙ†Ø§Ù Ù…Ø¹ Ø§Ù„Ø£Ù‚Ø³Ø§Ù… (JOIN FETCH)
+        return em.createQuery(
+            "SELECT DISTINCT s FROM Section s LEFT JOIN FETCH s.items", 
+            Section.class
+        ).getResultList();
+    } finally {
         em.close();
-        return sections;
     }
+}
 
-    // يمكن إضافة ميثودز خاصة بالسيناريوهات التشغيلية لاحقًا إذا احتاج المشروع
+    // ÙŠÙ…ÙƒÙ† Ø¥Ø¶Ø§ÙØ© Ù…ÙŠØ«ÙˆØ¯Ø² Ø®Ø§ØµØ© Ø¨Ø§Ù„Ø³ÙŠÙ†Ø§Ø±ÙŠÙˆÙ‡Ø§Øª Ø§Ù„ØªØ´ØºÙŠÙ„ÙŠØ© Ù„Ø§Ø­Ù‚Ù‹Ø§ Ø¥Ø°Ø§ Ø§Ø­ØªØ§Ø¬ Ø§Ù„Ù…Ø´Ø±ÙˆØ¹
 }
