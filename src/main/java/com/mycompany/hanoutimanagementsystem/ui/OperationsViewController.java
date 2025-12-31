@@ -5,7 +5,6 @@ import com.mycompany.hanoutimanagementsystem.controller.SectionController;
 import com.mycompany.hanoutimanagementsystem.controller.VendorController;
 import com.mycompany.hanoutimanagementsystem.model.Item;
 import com.mycompany.hanoutimanagementsystem.model.Section;
-import com.mycompany.hanoutimanagementsystem.model.SupplyContract;
 import com.mycompany.hanoutimanagementsystem.model.Vendor;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -13,7 +12,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -32,12 +30,6 @@ public class OperationsViewController {
     @FXML private ComboBox<Section> sectionFilterComboBox;
     @FXML private ComboBox<Item> itemFilterComboBox;
     @FXML private ComboBox<Vendor> vendorFilterComboBox;
-
-    // Item-Vendor Management
-    @FXML private ComboBox<Item> manageItemComboBox;
-    @FXML private ComboBox<Vendor> manageVendorComboBox;
-    @FXML private TextField supplyPriceField;
-    @FXML private ListView<SupplyContract> currentVendorsListView;
 
     // Controllers
     private ItemController itemController;
@@ -66,10 +58,10 @@ public class OperationsViewController {
         unifiedTable.setItems(unifiedDataList);
 
         setupUnifiedTable();
-        addDecimalValidation(supplyPriceField);
+        // ✅ حذف السطر الذي كان يسبب المشكلة
+        // addDecimalValidation(supplyPriceField);
         setupFilterControls();
         setupTabPane();
-        setupManagementComboBoxes();
         loadAllData();
     }
 
@@ -104,66 +96,21 @@ public class OperationsViewController {
     }
 
     private void updateTableColumns(String tabText) {
-        if (tabText.contains("Section Inventory")) {
+        if (tabText.contains("مخزون القسم")) {
             col1.setText("SKU");
             col2.setText("اسم الصنف");
             col3.setText("الكمية");
             col4.setText("السعر");
-        } else if (tabText.contains("Vendor Comparison")) {
+        } else if (tabText.contains("مقارنة الموردين")) {
             col1.setText("رقم الرخصة");
             col2.setText("جهة الاتصال");
             col3.setText("الصنف");
             col4.setText("سعر التوريد");
-        } else if (tabText.contains("Vendor Catalog")) {
+        } else if (tabText.contains("كتالوج المورد")) {
             col1.setText("SKU");
             col2.setText("اسم الصنف");
             col3.setText("القسم");
             col4.setText("السعر");
-        }
-    }
-
-    private void setupManagementComboBoxes() {
-        manageItemComboBox.setItems(itemsList);
-        manageVendorComboBox.setItems(vendorsList);
-
-        manageItemComboBox.setCellFactory(param -> new ListCell<Item>() {
-            @Override
-            protected void updateItem(Item item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty || item == null ? null : item.toString());
-            }
-        });
-        manageItemComboBox.setButtonCell(new ListCell<Item>() {
-            @Override
-            protected void updateItem(Item item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty || item == null ? null : item.toString());
-            }
-        });
-
-        manageVendorComboBox.setCellFactory(param -> new ListCell<Vendor>() {
-            @Override
-            protected void updateItem(Vendor item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty || item == null ? null : item.toString());
-            }
-        });
-        manageVendorComboBox.setButtonCell(new ListCell<Vendor>() {
-            @Override
-            protected void updateItem(Vendor item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty || item == null ? null : item.toString());
-            }
-        });
-
-        if (manageItemComboBox != null) {
-            manageItemComboBox.valueProperty().addListener((obs, oldVal, newVal) -> {
-                if (newVal != null) {
-                    updateCurrentVendorsList(newVal);
-                } else {
-                    currentVendorsListView.setItems(FXCollections.observableArrayList());
-                }
-            });
         }
     }
 
@@ -190,10 +137,6 @@ public class OperationsViewController {
     public void refreshAllData() {
         loadAllData();
         unifiedDataList.clear();
-        manageItemComboBox.setValue(null);
-        manageVendorComboBox.setValue(null);
-        supplyPriceField.clear();
-        currentVendorsListView.setItems(FXCollections.observableArrayList());
         showSuccess("تم تحديث البيانات بنجاح");
     }
 
@@ -220,9 +163,10 @@ public class OperationsViewController {
         Item selected = itemFilterComboBox.getValue();
         if (selected == null) return;
         try {
-            List<SupplyContract> contracts = vendorController.getVendorsByItem(selected.getSku());
+            List<com.mycompany.hanoutimanagementsystem.model.SupplyContract> contracts = 
+                vendorController.getVendorsByItem(selected.getSku());
             unifiedDataList.clear();
-            for (SupplyContract contract : contracts) {
+            for (var contract : contracts) {
                 unifiedDataList.add(new UnifiedOperationView(
                         contract.getVendor().getLicenseNumber(),
                         contract.getVendor().getContactName(),
@@ -258,77 +202,6 @@ public class OperationsViewController {
         } catch (Exception e) {
             showError("خطأ", "فشل عرض الكتالوج: " + e.getMessage());
         }
-    }
-
-    @FXML
-    private void handleAddVendorToItem() {
-        Item item = manageItemComboBox.getValue();
-        Vendor vendor = manageVendorComboBox.getValue();
-        String priceText = supplyPriceField.getText();
-
-        if (item == null || vendor == null || priceText.trim().isEmpty()) {
-            showError("خطأ", "يرجى اختيار صنف ومورد وإدخال سعر التوريد");
-            return;
-        }
-
-        try {
-            BigDecimal price = new BigDecimal(priceText);
-            itemController.addVendorToItem(item.getSku(), vendor.getLicenseNumber(), price);
-            updateCurrentVendorsList(item);
-            showSuccess("✅ تم ربط المورد بالصنف بنجاح");
-            supplyPriceField.clear();
-            loadAllData();
-        } catch (NumberFormatException e) {
-            showError("خطأ", "صيغة السعر غير صحيحة");
-        } catch (Exception e) {
-            showError("خطأ", "فشلت عملية الربط: " + e.getMessage());
-        }
-    }
-
-    @FXML
-    private void handleRemoveVendorFromItem() {
-        Item item = manageItemComboBox.getValue();
-        SupplyContract contract = currentVendorsListView.getSelectionModel().getSelectedItem();
-
-        if (item == null || contract == null) {
-            showError("خطأ", "يرجى اختيار مورد من القائمة");
-            return;
-        }
-
-        Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION, "هل أنت متأكد من إزالة هذا المورد؟", ButtonType.OK, ButtonType.CANCEL);
-        confirmAlert.setTitle("تأكيد الإزالة");
-        confirmAlert.setHeaderText(contract.getVendor().getContactName());
-
-        if (confirmAlert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
-            try {
-                itemController.removeVendorFromItem(item.getSku(), contract.getVendor().getLicenseNumber());
-                updateCurrentVendorsList(item);
-                showSuccess("✅ تم إزالة المورد من الصنف");
-                loadAllData();
-            } catch (Exception e) {
-                showError("خطأ", "فشلت عملية الإزالة: " + e.getMessage());
-            }
-        }
-    }
-
-    private void updateCurrentVendorsList(Item item) {
-        if (currentVendorsListView == null || item == null) return;
-        try {
-            Item refreshed = itemController.findItem(item.getSku());
-            if (refreshed != null) {
-                currentVendorsListView.setItems(FXCollections.observableArrayList(refreshed.getVendorSupplies()));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void addDecimalValidation(TextField textField) {
-        textField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue.matches("\\d*(\\.\\d*)?")) {
-                textField.setText(oldValue);
-            }
-        });
     }
 
     private void showSuccess(String message) {

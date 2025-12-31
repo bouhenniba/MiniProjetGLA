@@ -2,66 +2,60 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
-
 <BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.mycompany.hanoutimanagementsystem.ui.MainViewController"
-            prefWidth="1400" prefHeight="900">
-
-    <!-- The main content area is now an HBox to contain the sidebar and the content -->
+            prefWidth="1200" prefHeight="750">
+    
     <center>
         <HBox alignment="TOP_LEFT">
-
-            <!-- Left Sidebar for Navigation -->
-            <VBox spacing="15" alignment="TOP_CENTER" styleClass="sidebar" HBox.hgrow="NEVER">
+            <!-- Sidebar مضغوط -->
+            <VBox spacing="12" alignment="TOP_CENTER" styleClass="sidebar" HBox.hgrow="NEVER">
                 <padding>
-                    <Insets top="25" right="15" bottom="25" left="15"/>
+                    <Insets top="20" right="12" bottom="20" left="12"/>
                 </padding>
-
-                <!-- App Logo/Title inside Sidebar -->
-                <VBox alignment="CENTER" spacing="5" style="-fx-padding: 0 0 15 0;">
-                    <Label text="حنوتي" styleClass="sidebar-logo" />
-                    <Label text="Store Manager" styleClass="sidebar-sublogo" />
+                
+                <!-- Logo مضغوط -->
+                <VBox alignment="CENTER" spacing="3" style="-fx-padding: 0 0 10 0;">
+                    <Label text="حنوتي" styleClass="sidebar-logo" style="-fx-font-size: 26px;"/>
+                    <Label text="Manager" styleClass="sidebar-sublogo" style="-fx-font-size: 11px;"/>
                 </VBox>
-
-                <Separator prefWidth="200" />
-
-                <!-- Navigation Buttons -->
-                <VBox spacing="8" VBox.vgrow="ALWAYS">
-                    <Button text="الأصناف / Items" styleClass="nav-button" onAction="#selectItemsTab"/>
-                    <Button text="الأقسام / Sections" styleClass="nav-button" onAction="#selectSectionsTab"/>
-                    <Button text="الموردين / Vendors" styleClass="nav-button" onAction="#selectVendorsTab"/>
-                    <Button text="العمليات / Operations" styleClass="nav-button" onAction="#selectOperationsTab"/>
+                
+                <Separator prefWidth="180" />
+                
+                <!-- أزرار التنقل -->
+                <VBox spacing="6" VBox.vgrow="ALWAYS">
+                    <Button text="📦 الأصناف" styleClass="nav-button" onAction="#selectItemsTab" prefWidth="180"/>
+                    <Button text="🗂️ الأقسام" styleClass="nav-button" onAction="#selectSectionsTab" prefWidth="180"/>
+                    <Button text="👥 الموردين" styleClass="nav-button" onAction="#selectVendorsTab" prefWidth="180"/>
+                    <Button text="⚙️ العمليات" styleClass="nav-button" onAction="#selectOperationsTab" prefWidth="180"/>
                 </VBox>
-
-                <!-- Spacer to push bottom items down -->
+                
                 <Region VBox.vgrow="ALWAYS" />
-
-                <!-- Bottom Ghost Buttons -->
-                <VBox spacing="8" alignment="CENTER">
-                    <Button text="الإعدادات / Settings" styleClass="ghost-button" prefWidth="180"/>
-                    <Button text="تسجيل الخروج / Logout" styleClass="ghost-button" prefWidth="180"/>
+                
+                <!-- أزرار سفلية -->
+                <VBox spacing="6" alignment="CENTER">
+                    <Button text="⚙️ الإعدادات" styleClass="ghost-button" prefWidth="180"/>
+                    <Button text="🚪 خروج" styleClass="ghost-button" prefWidth="180"/>
                 </VBox>
             </VBox>
-
-            <!-- Right Content Area -->
+            
+            <!-- منطقة المحتوى -->
             <VBox HBox.hgrow="ALWAYS" styleClass="content-area">
                 <TabPane fx:id="mainTabPane" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
-                    <Tab text="الأصناف / Items">
+                    <Tab text="📦 الأصناف">
                         <fx:include source="ItemsView.fxml" />
                     </Tab>
-                    <Tab text="الأقسام / Sections">
+                    <Tab text="🗂️ الأقسام">
                         <fx:include source="SectionsView.fxml" />
                     </Tab>
-                    <Tab text="الموردين / Vendors">
+                    <Tab text="👥 الموردين">
                         <fx:include source="VendorsView.fxml" />
                     </Tab>
-                    <Tab text="العمليات / Operations">
+                    <Tab text="⚙️ العمليات">
                         <fx:include source="OperationsView.fxml" fx:id="operationsView" />
                     </Tab>
                 </TabPane>
             </VBox>
-
         </HBox>
     </center>
-
 </BorderPane>

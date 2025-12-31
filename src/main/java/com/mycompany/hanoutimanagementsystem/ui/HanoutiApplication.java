@@ -36,13 +36,12 @@ public class HanoutiApplication extends Application {
         Parent root = loader.load();
         
         // إعداد النافذة
-        Scene scene = new Scene(root, 1200, 700);
+        Scene scene = new Scene(root);
         scene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
         
-        primaryStage.setTitle("نظام إدارة حنوتي - Hanouti Management System");
+        primaryStage.setTitle("🏪 نظام إدارة حنوتي - Hanouti Management System");
         primaryStage.setScene(scene);
-        primaryStage.setMinWidth(1000);
-        primaryStage.setMinHeight(600);
+        primaryStage.setMaximized(true); // ✅ ملء الشاشة تلقائياً
         primaryStage.show();
     }
     
@@ -62,7 +61,8 @@ public class HanoutiApplication extends Application {
             } else if (controller instanceof SectionsViewController) {
                 ((SectionsViewController) controller).setController(sectionController);
             } else if (controller instanceof VendorsViewController) {
-                ((VendorsViewController) controller).setController(vendorController);
+                // ✅ تمرير كلا المتحكمين
+                ((VendorsViewController) controller).setControllers(vendorController, itemController);
             } else if (controller instanceof OperationsViewController) {
                 ((OperationsViewController) controller).setControllers(itemController, sectionController, vendorController);
             }

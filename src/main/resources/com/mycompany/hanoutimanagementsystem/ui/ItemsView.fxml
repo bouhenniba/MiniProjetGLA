@@ -6,94 +6,105 @@
             fx:controller="com.mycompany.hanoutimanagementsystem.ui.ItemsViewController"
             fitToWidth="true" style="-fx-background-color: transparent;">
     
-    <VBox spacing="20">
+    <VBox spacing="15">
         <padding>
-            <Insets top="25" right="25" bottom="25" left="25"/>
+            <Insets top="15" right="15" bottom="15" left="15"/>
         </padding>
         
+        <!-- عنوان رئيسي محسّن -->
+        <HBox alignment="CENTER_LEFT" spacing="12" style="-fx-background-color: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -fx-background-radius: 12px; -fx-padding: 15px 20px; -fx-effect: dropshadow(gaussian, rgba(102,126,234,0.4), 18, 0, 0, 4);">
+            <Label text="📦" style="-fx-font-size: 32px;"/>
+            <VBox spacing="2">
+                <Label text="إدارة الأصناف" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: white; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 4, 0, 0, 2);"/>
+                <Label text="Items Management System" style="-fx-font-size: 12px; -fx-text-fill: rgba(255,255,255,0.95); -fx-font-weight: 600;"/>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label text="🏪" style="-fx-font-size: 40px; -fx-opacity: 0.25;"/>
+        </HBox>
+        
         <!-- قسم الإدخال العلوي -->
-        <VBox spacing="18" styleClass="input-section">
-            <padding>
-                <Insets top="25" right="25" bottom="25" left="25"/>
-            </padding>
-            
-            <!-- عنوان القسم -->
-            <Label text="إدارة الأصناف - Items Management" styleClass="section-title"/>
+        <VBox spacing="12" styleClass="modern-card" style="-fx-padding: 18px;">
+            <Label text="📝 بيانات الصنف الجديد" style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #2d3748;"/>
             
             <!-- حقول الإدخال -->
-            <GridPane hgap="18" vgap="15">
+            <GridPane hgap="15" vgap="14">
                 <columnConstraints>
-                    <ColumnConstraints minWidth="100" prefWidth="120" />
-                    <ColumnConstraints minWidth="150" prefWidth="200" />
-                    <ColumnConstraints minWidth="100" prefWidth="120" />
-                    <ColumnConstraints minWidth="150" prefWidth="200" />
+                    <ColumnConstraints minWidth="100" prefWidth="120" halignment="RIGHT"/>
+                    <ColumnConstraints minWidth="180" prefWidth="220" hgrow="ALWAYS"/>
+                    <ColumnConstraints minWidth="100" prefWidth="120" halignment="RIGHT"/>
+                    <ColumnConstraints minWidth="180" prefWidth="220" hgrow="ALWAYS"/>
                 </columnConstraints>
                 
                 <!-- رقم SKU -->
-                <Label text="رقم SKU:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-                <TextField fx:id="skuField" promptText="أدخل رقم SKU" 
-                          GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                <Label text="🔢 SKU:" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="field-label"/>
+                <TextField fx:id="skuField" promptText="رقم SKU" 
+                          GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="modern-textfield"/>
                 
                 <!-- الاسم -->
-                <Label text="الاسم / Name:" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                <Label text="📝 الاسم:" GridPane.columnIndex="2" GridPane.rowIndex="0" styleClass="field-label"/>
                 <TextField fx:id="nameField" promptText="اسم الصنف" 
-                          GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+                          GridPane.columnIndex="3" GridPane.rowIndex="0" styleClass="modern-textfield"/>
                 
                 <!-- الكمية -->
-                <Label text="الكمية / Stock:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                <Label text="📊 الكمية:" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="field-label"/>
                 <TextField fx:id="stockField" promptText="الكمية" 
-                          GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                          GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="modern-textfield"/>
                 
-                <!-- ✅ السعر - حقل جديد -->
-                <Label text="السعر / Price:" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
-                <TextField fx:id="priceField" promptText="السعر (مثال: 99.99)" 
-                          GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+                <!-- السعر -->
+                <Label text="💰 السعر:" GridPane.columnIndex="2" GridPane.rowIndex="1" styleClass="field-label"/>
+                <TextField fx:id="priceField" promptText="99.99 دج" 
+                          GridPane.columnIndex="3" GridPane.rowIndex="1" styleClass="modern-textfield"/>
                 
                 <!-- القسم -->
-                <Label text="القسم / Section:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-                <ComboBox fx:id="sectionComboBox" promptText="اختر القسم (إجباري)" 
-                         GridPane.columnIndex="1" GridPane.rowIndex="2" maxWidth="Infinity"/>
+                <Label text="🗂️ القسم:" GridPane.columnIndex="0" GridPane.rowIndex="2" styleClass="field-label"/>
+                <ComboBox fx:id="sectionComboBox" promptText="اختر القسم المناسب" 
+                         GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.columnSpan="3" 
+                         maxWidth="Infinity" styleClass="modern-combobox"/>
             </GridPane>
             
             <!-- أزرار العمليات -->
-            <HBox spacing="15" alignment="CENTER_LEFT">
-                <Button fx:id="addButton" text="إضافة / Add" onAction="#handleAdd" 
-                       styleClass="primary-button" prefWidth="120"/>
-                <Button fx:id="updateButton" text="تحديث / Update" onAction="#handleUpdate" 
-                       styleClass="primary-button" prefWidth="120"/>
-                <Button fx:id="deleteButton" text="حذف / Delete" onAction="#handleDelete" 
-                       styleClass="danger-button" prefWidth="120"/>
-                <Button fx:id="clearButton" text="مسح / Clear" onAction="#handleClear" 
-                       prefWidth="120"/>
+            <HBox spacing="12" alignment="CENTER_LEFT" style="-fx-padding: 8px 0 0 0;">
+                <Button fx:id="addButton" text="✅ إضافة" onAction="#handleAdd" 
+                       styleClass="primary-action-button" prefWidth="130" prefHeight="38"/>
+                <Button fx:id="updateButton" text="🔄 تحديث" onAction="#handleUpdate" 
+                       styleClass="update-action-button" prefWidth="130" prefHeight="38"/>
+                <Button fx:id="deleteButton" text="🗑️ حذف" onAction="#handleDelete" 
+                       styleClass="delete-action-button" prefWidth="110" prefHeight="38"/>
+                <Button fx:id="clearButton" text="🧹 مسح" onAction="#handleClear" 
+                       styleClass="clear-action-button" prefWidth="110" prefHeight="38"/>
             </HBox>
         </VBox>
         
         <!-- شريط البحث والفلترة -->
-        <HBox spacing="15" alignment="CENTER_LEFT" style="-fx-padding: 0 8 0 8;">
-            <Label text="بحث:" style="-fx-font-weight: bold; -fx-font-size: 15px;"/>
+        <HBox spacing="12" alignment="CENTER_LEFT" styleClass="search-bar" style="-fx-padding: 12px 18px;">
+            <Label text="🔍" style="-fx-font-size: 22px;"/>
             <TextField fx:id="searchField" promptText="ابحث بالاسم أو SKU" 
-                      prefWidth="280" onKeyReleased="#handleSearch"/>
+                      prefWidth="280" styleClass="search-field" onKeyReleased="#handleSearch"/>
                       
             <Region HBox.hgrow="ALWAYS"/>
             
-            <Label text="فلتر حسب القسم:" style="-fx-font-weight: bold; -fx-font-size: 15px;"/>
+            <Label text="القسم:" style="-fx-font-weight: 600; -fx-font-size: 13px; -fx-text-fill: #4a5568;"/>
             <ComboBox fx:id="filterSectionComboBox" promptText="كل الأقسام" 
-                     prefWidth="200" onAction="#handleFilterBySection"/>
-            <Button text="تحديث" onAction="#handleRefresh" prefWidth="110"/>
+                     prefWidth="200" styleClass="modern-combobox" onAction="#handleFilterBySection"/>
+            <Button text="🔄" onAction="#handleRefresh" prefWidth="45" prefHeight="36" styleClass="refresh-button"/>
         </HBox>
         
         <!-- جدول الأصناف -->
-        <TableView fx:id="itemsTable" styleClass="data-table" 
-                   VBox.vgrow="ALWAYS">
+        <TableView fx:id="itemsTable" styleClass="modern-table" 
+                   VBox.vgrow="ALWAYS" minHeight="400">
             <columns>
-                <TableColumn fx:id="skuColumn" text="SKU" prefWidth="100"/>
-                <TableColumn fx:id="nameColumn" text="الاسم / Name" prefWidth="250"/>
-                <TableColumn fx:id="stockColumn" text="الكمية" prefWidth="100"/>
-                <TableColumn fx:id="priceColumn" text="السعر / Price" prefWidth="120"/>
-                <TableColumn fx:id="sectionColumn" text="القسم" prefWidth="200"/>
+                <TableColumn fx:id="skuColumn" text="SKU" prefWidth="120" minWidth="80"/>
+                <TableColumn fx:id="nameColumn" text="اسم الصنف / Item Name" prefWidth="300" minWidth="200"/>
+                <TableColumn fx:id="stockColumn" text="الكمية" prefWidth="120" minWidth="80"/>
+                <TableColumn fx:id="priceColumn" text="السعر (دج)" prefWidth="140" minWidth="100"/>
+                <TableColumn fx:id="sectionColumn" text="القسم / Section" prefWidth="240" minWidth="150"/>
             </columns>
             <placeholder>
-                <Label text="لا توجد أصناف - No items found" style="-fx-font-size: 16px;"/>
+                <VBox alignment="CENTER" spacing="12" style="-fx-padding: 50px;">
+                    <Label text="📦" style="-fx-font-size: 56px; -fx-opacity: 0.15;"/>
+                    <Label text="لا توجد أصناف مسجلة" style="-fx-font-size: 16px; -fx-text-fill: #a0aec0; -fx-font-weight: bold;"/>
+                    <Label text="ابدأ بإضافة صنف جديد من الأعلى" style="-fx-font-size: 13px; -fx-text-fill: #cbd5e0;"/>
+                </VBox>
             </placeholder>
         </TableView>
         

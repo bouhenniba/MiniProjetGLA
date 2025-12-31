@@ -6,129 +6,156 @@
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.mycompany.hanoutimanagementsystem.ui.OperationsViewController"
             fitToWidth="true" style="-fx-background-color: transparent;">
-
-    <VBox spacing="25">
+    <VBox spacing="15">
         <padding>
-            <Insets top="25" right="25" bottom="25" left="25"/>
+            <Insets top="15" right="15" bottom="15" left="15"/>
         </padding>
-
-        <!-- ✅ شريط الأدوات العلوي مع زر التحديث -->
-        <HBox spacing="15" alignment="CENTER_LEFT" style="-fx-padding: 0 0 10 0;">
-            <Label text="السيناريوهات التشغيلية - Operational Scenarios"
-                   style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #4a3e6f;"/>
-            <Region HBox.hgrow="ALWAYS"/>
-            <Button text="🔄 تحديث البيانات / Refresh All"
-                   onAction="#refreshAllData"
-                   styleClass="success-button"
-                   prefWidth="180"
-                   style="-fx-font-size: 14px;"/>
+        
+        <!-- عنوان رئيسي محسّن بتأثيرات أفضل -->
+        <HBox spacing="12" alignment="CENTER_LEFT">
+            <HBox alignment="CENTER_LEFT" spacing="15" style="-fx-background-color: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -fx-background-radius: 12px; -fx-padding: 18px 24px; -fx-effect: dropshadow(gaussian, rgba(102,126,234,0.5), 20, 0, 0, 5);" HBox.hgrow="ALWAYS">
+                <Label text="⚙️" style="-fx-font-size: 36px;"/>
+                <VBox spacing="2">
+                    <Label text="العمليات التشغيلية والتقارير" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: white; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 5, 0, 0, 2);"/>
+                    <Label text="Operational Scenarios &amp; Analytical Reports" style="-fx-font-size: 12px; -fx-text-fill: rgba(255,255,255,0.95); -fx-font-weight: 600;"/>
+                </VBox>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label text="📊" style="-fx-font-size: 44px; -fx-opacity: 0.2;"/>
+            </HBox>
+            <Button text="🔄 تحديث البيانات" onAction="#refreshAllData" styleClass="refresh-button-large" prefWidth="160" prefHeight="42"/>
         </HBox>
-
-        <Separator/>
-
-        <!-- ==================== Unified Operations View ==================== -->
-        <VBox spacing="15" styleClass="scenario-section">
-            <padding>
-                <Insets top="20" right="20" bottom="20" left="20"/>
-            </padding>
-
-            <Label text="عرض العمليات الموحد - Unified Operations View"
-                   styleClass="scenario-title"/>
-
-            <TabPane fx:id="operationsTabPane" tabClosingPolicy="UNAVAILABLE">
+        
+        <!-- بطاقة عرض العمليات -->
+        <VBox spacing="15" styleClass="modern-card" style="-fx-padding: 20px; -fx-background-color: white;">
+            <HBox alignment="CENTER_LEFT" spacing="12">
+                <Label text="📊" style="-fx-font-size: 24px;"/>
+                <Label text="عرض العمليات والتقارير الموحد" style="-fx-font-size: 17px; -fx-font-weight: bold; -fx-text-fill: #2d3748;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label text="اختر نوع التقرير المطلوب من الأسفل" style="-fx-font-size: 12px; -fx-text-fill: #718096; -fx-font-style: italic;"/>
+            </HBox>
+            
+            <TabPane fx:id="operationsTabPane" tabClosingPolicy="UNAVAILABLE" style="-fx-padding: 0;">
                 <tabs>
-                    <Tab text="مخزون القسم - Section Inventory">
-                        <content>
-                            <HBox spacing="15" alignment="CENTER_LEFT" style="-fx-padding: 10;">
-                                <Label text="اختر القسم:" style="-fx-font-weight: bold;"/>
-                                <ComboBox fx:id="sectionFilterComboBox" prefWidth="300" promptText="اختر قسم"/>
+                    <!-- Tab 1: مخزون القسم -->
+                    <Tab>
+                        <graphic>
+                            <HBox spacing="10" alignment="CENTER">
+                                <Label text="📦" style="-fx-font-size: 18px;"/>
+                                <Label text="مخزون القسم" style="-fx-font-size: 14px; -fx-font-weight: 600;"/>
                             </HBox>
+                        </graphic>
+                        <content>
+                            <VBox spacing="14" style="-fx-padding: 18px; -fx-background-color: #f8f9ff; -fx-background-radius: 8px;">
+                                <Label text="عرض جميع الأصناف المخزنة في قسم معين مع تفاصيل الكمية والأسعار" style="-fx-font-size: 13px; -fx-text-fill: #718096;"/>
+                                <HBox spacing="15" alignment="CENTER_LEFT">
+                                    <Label text="اختر القسم:" style="-fx-font-weight: 600; -fx-font-size: 14px; -fx-text-fill: #4a5568;"/>
+                                    <ComboBox fx:id="sectionFilterComboBox" prefWidth="320" promptText="🔍 اختر قسم لعرض مخزونه بالتفصيل" styleClass="modern-combobox"/>
+                                    <Region HBox.hgrow="ALWAYS"/>
+                                    <Label text="💡" style="-fx-font-size: 18px;"/>
+                                    <Label text="سيتم عرض SKU، الاسم، الكمية، والسعر" style="-fx-font-size: 12px; -fx-text-fill: #a0aec0;"/>
+                                </HBox>
+                            </VBox>
                         </content>
                     </Tab>
-                    <Tab text="مقارنة الموردين - Vendor Comparison">
-                        <content>
-                            <HBox spacing="15" alignment="CENTER_LEFT" style="-fx-padding: 10;">
-                                <Label text="اختر الصنف:" style="-fx-font-weight: bold;"/>
-                                <ComboBox fx:id="itemFilterComboBox" prefWidth="350" promptText="اختر صنف"/>
+                    
+                    <!-- Tab 2: مقارنة الموردين -->
+                    <Tab>
+                        <graphic>
+                            <HBox spacing="10" alignment="CENTER">
+                                <Label text="🔍" style="-fx-font-size: 18px;"/>
+                                <Label text="مقارنة الموردين" style="-fx-font-size: 14px; -fx-font-weight: 600;"/>
                             </HBox>
+                        </graphic>
+                        <content>
+                            <VBox spacing="14" style="-fx-padding: 18px; -fx-background-color: #fff8f0; -fx-background-radius: 8px;">
+                                <Label text="قارن أسعار التوريد من موردين مختلفين لنفس الصنف واختر الأفضل" style="-fx-font-size: 13px; -fx-text-fill: #718096;"/>
+                                <HBox spacing="15" alignment="CENTER_LEFT">
+                                    <Label text="اختر الصنف:" style="-fx-font-weight: 600; -fx-font-size: 14px; -fx-text-fill: #4a5568;"/>
+                                    <ComboBox fx:id="itemFilterComboBox" prefWidth="380" promptText="🔍 اختر صنف لمقارنة أسعار موردينه" styleClass="modern-combobox"/>
+                                    <Region HBox.hgrow="ALWAYS"/>
+                                    <Label text="💰" style="-fx-font-size: 18px;"/>
+                                    <Label text="اختر أفضل سعر توريد متاح" style="-fx-font-size: 12px; -fx-text-fill: #a0aec0;"/>
+                                </HBox>
+                            </VBox>
                         </content>
                     </Tab>
-                    <Tab text="كتالوج المورد - Vendor Catalog">
-                        <content>
-                            <HBox spacing="15" alignment="CENTER_LEFT" style="-fx-padding: 10;">
-                                <Label text="اختر المورد:" style="-fx-font-weight: bold;"/>
-                                <ComboBox fx:id="vendorFilterComboBox" prefWidth="350" promptText="اختر مورد"/>
+                    
+                    <!-- Tab 3: كتالوج المورد -->
+                    <Tab>
+                        <graphic>
+                            <HBox spacing="10" alignment="CENTER">
+                                <Label text="📋" style="-fx-font-size: 18px;"/>
+                                <Label text="كتالوج المورد" style="-fx-font-size: 14px; -fx-font-weight: 600;"/>
                             </HBox>
+                        </graphic>
+                        <content>
+                            <VBox spacing="14" style="-fx-padding: 18px; -fx-background-color: #f0fff4; -fx-background-radius: 8px;">
+                                <Label text="عرض جميع الأصناف التي يوفرها مورد معين مع أقسامها وأسعارها" style="-fx-font-size: 13px; -fx-text-fill: #718096;"/>
+                                <HBox spacing="15" alignment="CENTER_LEFT">
+                                    <Label text="اختر المورد:" style="-fx-font-weight: 600; -fx-font-size: 14px; -fx-text-fill: #4a5568;"/>
+                                    <ComboBox fx:id="vendorFilterComboBox" prefWidth="380" promptText="🔍 اختر مورد لعرض كتالوجه الكامل" styleClass="modern-combobox"/>
+                                    <Region HBox.hgrow="ALWAYS"/>
+                                    <Label text="📦" style="-fx-font-size: 18px;"/>
+                                    <Label text="جميع المنتجات المتوفرة من المورد" style="-fx-font-size: 12px; -fx-text-fill: #a0aec0;"/>
+                                </HBox>
+                            </VBox>
                         </content>
                     </Tab>
                 </tabs>
             </TabPane>
-
-            <TableView fx:id="unifiedTable" styleClass="data-table" prefHeight="350">
-                <columns>
-                    <TableColumn fx:id="col1" text="المعرف" prefWidth="150"/>
-                    <TableColumn fx:id="col2" text="الاسم" prefWidth="250"/>
-                    <TableColumn fx:id="col3" text="الوصف/القسم" prefWidth="250"/>
-                    <TableColumn fx:id="col4" text="القيمة/السعر" prefWidth="150"/>
-                </columns>
-                <placeholder>
-                    <Label text="اختر نوع العرض وقم بالتصفية لعرض البيانات" style="-fx-font-size: 14px;"/>
-                </placeholder>
-            </TableView>
-        </VBox>
-
-        <!-- ==================== إدارة علاقة Item-Vendor ==================== -->
-        <VBox spacing="15" styleClass="scenario-section">
-            <padding>
-                <Insets top="20" right="20" bottom="20" left="20"/>
-            </padding>
-
-            <Label text="إدارة العلاقات: ربط الأصناف بالموردين"
-                   styleClass="scenario-title"/>
-            <Label text="أضف أو أزل موردين من صنف معين"
-                   style="-fx-font-size: 13px; -fx-text-fill: #6b7280;"/>
-
-            <GridPane hgap="15" vgap="15">
-                <columnConstraints>
-                    <ColumnConstraints minWidth="120" prefWidth="150"/>
-                    <ColumnConstraints minWidth="250" prefWidth="350"/>
-                </columnConstraints>
-
-                <Label text="اختر الصنف:" GridPane.columnIndex="0" GridPane.rowIndex="0"
-                      style="-fx-font-weight: bold;"/>
-                <ComboBox fx:id="manageItemComboBox" promptText="اختر صنف"
-                         GridPane.columnIndex="1" GridPane.rowIndex="0" maxWidth="Infinity"/>
-
-                <Label text="اختر المورد:" GridPane.columnIndex="0" GridPane.rowIndex="1"
-                      style="-fx-font-weight: bold;"/>
-                <ComboBox fx:id="manageVendorComboBox" promptText="اختر مورد للإضافة"
-                         GridPane.columnIndex="1" GridPane.rowIndex="1" maxWidth="Infinity"/>
-
-                <Label text="سعر التوريد:" GridPane.columnIndex="0" GridPane.rowIndex="2"
-                      style="-fx-font-weight: bold;"/>
-                <TextField fx:id="supplyPriceField" promptText="أدخل سعر التوريد"
-                         GridPane.columnIndex="1" GridPane.rowIndex="2" maxWidth="Infinity"/>
-            </GridPane>
-
-            <HBox spacing="15" alignment="CENTER_LEFT">
-                <Button text="➕ إضافة مورد للصنف" onAction="#handleAddVendorToItem"
-                       styleClass="success-button" prefWidth="170"/>
-                <Button text="➖ إزالة مورد من الصنف" onAction="#handleRemoveVendorFromItem"
-                       styleClass="danger-button" prefWidth="170"/>
-            </HBox>
-
-            <VBox spacing="10">
-                <Label text="الموردون الحاليون للصنف المختار:"
-                      style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
-                <ListView fx:id="currentVendorsListView" prefHeight="150"
-                         styleClass="data-table">
+            
+            <!-- جدول النتائج -->
+            <VBox spacing="12">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label text="📈" style="-fx-font-size: 22px;"/>
+                    <Label text="نتائج البحث والتحليل" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2d3748;"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label text="اختر فلتر من التبويبات أعلاه لعرض البيانات" style="-fx-font-size: 12px; -fx-text-fill: #a0aec0; -fx-font-style: italic;"/>
+                </HBox>
+                
+                <TableView fx:id="unifiedTable" styleClass="modern-table" prefHeight="380" minHeight="300">
+                    <columns>
+                        <TableColumn fx:id="col1" text="المعرف" prefWidth="200" minWidth="120"/>
+                        <TableColumn fx:id="col2" text="الاسم" prefWidth="320" minWidth="200"/>
+                        <TableColumn fx:id="col3" text="الوصف" prefWidth="300" minWidth="180"/>
+                        <TableColumn fx:id="col4" text="القيمة" prefWidth="180" minWidth="120"/>
+                    </columns>
                     <placeholder>
-                        <Label text="اختر صنفاً لعرض مورديه"
-                              style="-fx-font-size: 13px; -fx-text-fill: #9ca3af;"/>
+                        <VBox alignment="CENTER" spacing="14" style="-fx-padding: 50px;">
+                            <Label text="📊" style="-fx-font-size: 64px; -fx-opacity: 0.12;"/>
+                            <Label text="لا توجد بيانات لعرضها" style="-fx-font-size: 17px; -fx-text-fill: #a0aec0; -fx-font-weight: bold;"/>
+                            <Label text="اختر نوع العرض من التبويبات أعلاه وقم بتحديد الفلتر المناسب" style="-fx-font-size: 13px; -fx-text-fill: #cbd5e0;"/>
+                        </VBox>
                     </placeholder>
-                </ListView>
+                </TableView>
             </VBox>
         </VBox>
-
+        
+        <!-- بطاقات معلومات ونصائح -->
+        <HBox spacing="15">
+            <VBox spacing="12" styleClass="info-card" HBox.hgrow="ALWAYS">
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="💡" style="-fx-font-size: 26px;"/>
+                    <Label text="نصائح الاستخدام" style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #2d3748;"/>
+                </HBox>
+                <VBox spacing="8">
+                    <Label text="• استخدم مخزون القسم لمراجعة الكميات المتوفرة بشكل دوري" style="-fx-font-size: 12px; -fx-text-fill: #4a5568;"/>
+                    <Label text="• قارن أسعار الموردين قبل اتخاذ قرار الشراء" style="-fx-font-size: 12px; -fx-text-fill: #4a5568;"/>
+                    <Label text="• راجع كتالوج المورد قبل تقديم أي طلبات جديدة" style="-fx-font-size: 12px; -fx-text-fill: #4a5568;"/>
+                </VBox>
+            </VBox>
+            
+            <VBox spacing="12" styleClass="stats-card" HBox.hgrow="ALWAYS">
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="📈" style="-fx-font-size: 26px;"/>
+                    <Label text="معلومات سريعة" style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #2d3748;"/>
+                </HBox>
+                <VBox spacing="8">
+                    <Label text="• لإدارة الأصناف والموردين انتقل لصفحة الموردين" style="-fx-font-size: 12px; -fx-text-fill: #4a5568;"/>
+                    <Label text="• يمكنك إضافة وإزالة أصناف مباشرة من صفحة الموردين" style="-fx-font-size: 12px; -fx-text-fill: #4a5568;"/>
+                    <Label text="• استخدم زر التحديث لتحديث جميع البيانات والتقارير" style="-fx-font-size: 12px; -fx-text-fill: #4a5568;"/>
+                </VBox>
+            </VBox>
+        </HBox>
     </VBox>
 </ScrollPane>

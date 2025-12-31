@@ -4,6 +4,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.collections.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
+import javafx.geometry.Insets;
 import com.mycompany.hanoutimanagementsystem.model.*;
 import com.mycompany.hanoutimanagementsystem.controller.*;
 import java.math.BigDecimal;
@@ -17,8 +20,11 @@ public class VendorsViewController {
     @FXML private TextField contactField;
     @FXML private TextField searchField;
 
+    @FXML private ListView<ItemSupplyEntry> itemsListView;
     @FXML private ComboBox<Item> itemComboBox;
     @FXML private TextField supplyPriceField;
+    @FXML private Button addItemButton;
+    @FXML private Button removeItemButton;
 
     @FXML private TableView<Vendor> vendorsTable;
     @FXML private TableColumn<Vendor, String> vendorNameColumn;
@@ -27,11 +33,18 @@ public class VendorsViewController {
     @FXML private TableColumn<Vendor, Integer> itemsSuppliedColumn;
 
     private VendorController vendorController;
+    private ItemController itemController;
     private ObservableList<Vendor> vendorsList;
     private ObservableList<Vendor> allVendors;
+    private ObservableList<ItemSupplyEntry> currentItems;
 
     public void setController(VendorController vendorController) {
         this.vendorController = vendorController;
+    }
+
+    public void setControllers(VendorController vendorController, ItemController itemController) {
+        this.vendorController = vendorController;
+        this.itemController = itemController;
     }
 
     @FXML
@@ -46,6 +59,22 @@ public class VendorsViewController {
                 cellData.getValue().getProvidedItems() != null ? cellData.getValue().getProvidedItems().size() : 0
             ).asObject()
         );
+
+        currentItems = FXCollections.observableArrayList();
+        itemsListView.setItems(currentItems);
+        
+        itemsListView.setCellFactory(param -> new ListCell<ItemSupplyEntry>() {
+            @Override
+            protected void updateItem(ItemSupplyEntry entry, boolean empty) {
+                super.updateItem(entry, empty);
+                if (empty || entry == null) {
+                    setText(null);
+                    setGraphic(null);
+                } else {
+                    setText(entry.getItem().getName() + " - " + entry.getSupplyPrice() + " دج");
+                }
+            }
+        });
 
         loadItems();
         addDecimalValidation(supplyPriceField);
@@ -71,7 +100,64 @@ public class VendorsViewController {
     private void loadItems() {
         if (vendorController != null) {
             itemComboBox.setItems(FXCollections.observableArrayList(vendorController.getAllItems()));
+            itemComboBox.setCellFactory(param -> new ListCell<Item>() {
+                @Override
+                protected void updateItem(Item item, boolean empty) {
+                    super.updateItem(item, empty);
+                    setText(empty || item == null ? null : item.getSku() + " - " + item.getName());
+                }
+            });
+            itemComboBox.setButtonCell(new ListCell<Item>() {
+                @Override
+                protected void updateItem(Item item, boolean empty) {
+                    super.updateItem(item, empty);
+                    setText(empty || item == null ? null : item.getSku() + " - " + item.getName());
+                }
+            });
         }
+    }
+
+    @FXML
+    private void handleAddItemToList() {
+        Item selectedItem = itemComboBox.getValue();
+        String priceText = supplyPriceField.getText().trim();
+
+        if (selectedItem == null) {
+            showError("خطأ", "يرجى اختيار صنف");
+            return;
+        }
+
+        if (priceText.isEmpty()) {
+            showError("خطأ", "يرجى إدخال سعر التوريد");
+            return;
+        }
+
+        boolean exists = currentItems.stream()
+            .anyMatch(entry -> entry.getItem().getSku().equals(selectedItem.getSku()));
+
+        if (exists) {
+            showError("خطأ", "هذا الصنف موجود بالفعل في القائمة");
+            return;
+        }
+
+        try {
+            BigDecimal price = new BigDecimal(priceText);
+            currentItems.add(new ItemSupplyEntry(selectedItem, price));
+            itemComboBox.setValue(null);
+            supplyPriceField.clear();
+        } catch (NumberFormatException e) {
+            showError("خطأ", "صيغة السعر غير صحيحة");
+        }
+    }
+
+    @FXML
+    private void handleRemoveItemFromList() {
+        ItemSupplyEntry selected = itemsListView.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            showError("خطأ", "يرجى اختيار صنف من القائمة لإزالته");
+            return;
+        }
+        currentItems.remove(selected);
     }
 
     private void addDecimalValidation(TextField textField) {
@@ -94,21 +180,15 @@ public class VendorsViewController {
             String license = licenseField.getText();
             String contact = contactField.getText();
 
-            Item selectedItem = itemComboBox.getValue();
-            String priceText = supplyPriceField.getText();
-
             Vendor newVendor = new Vendor(license, vendorName, contact);
 
-            if (selectedItem != null && !priceText.isEmpty()) {
-                try {
-                    BigDecimal price = new BigDecimal(priceText);
-                    SupplyContract contract = new SupplyContract(selectedItem, newVendor, price);
-                    Set<SupplyContract> contracts = new HashSet<>();
+            if (!currentItems.isEmpty()) {
+                Set<SupplyContract> contracts = new HashSet<>();
+                for (ItemSupplyEntry entry : currentItems) {
+                    SupplyContract contract = new SupplyContract(entry.getItem(), newVendor, entry.getSupplyPrice());
                     contracts.add(contract);
-                    newVendor.setProvidedItems(contracts);
-                } catch (NumberFormatException e) {
-                    showError("خطأ", "صيغة السعر غير صحيحة. سيتم حفظ المورد بدون معلومات التوريد.");
                 }
+                newVendor.setProvidedItems(contracts);
             }
 
             vendorController.createVendor(newVendor);
@@ -116,7 +196,7 @@ public class VendorsViewController {
             allVendors.add(newVendor);
             vendorsList.add(newVendor);
 
-            showSuccess("تم إضافة المورد بنجاح");
+            showSuccess("✅ تم إضافة المورد بنجاح مع " + currentItems.size() + " صنف");
             handleClear();
 
         } catch (Exception e) {
@@ -140,17 +220,30 @@ public class VendorsViewController {
 
             selectedVendor.setVendorName(vendorNameField.getText());
             selectedVendor.setContactName(contactField.getText());
-            // License number is the ID, so it should not be updated.
 
-            // Logic for updating supply contract would be more complex.
-            // For now, we focus on updating vendor's own fields.
-            // If an item and price are selected, should it add a new contract or update an existing one?
-            // This part is left for more detailed requirements.
+            if (!currentItems.isEmpty() && itemController != null) {
+                for (ItemSupplyEntry entry : currentItems) {
+                    boolean alreadyLinked = selectedVendor.getProvidedItems().stream()
+                        .anyMatch(sc -> sc.getItem().getSku().equals(entry.getItem().getSku()));
+                    
+                    if (!alreadyLinked) {
+                        try {
+                            itemController.addVendorToItem(
+                                entry.getItem().getSku(), 
+                                selectedVendor.getLicenseNumber(), 
+                                entry.getSupplyPrice()
+                            );
+                        } catch (Exception e) {
+                            System.err.println("تحذير: فشل ربط الصنف: " + e.getMessage());
+                        }
+                    }
+                }
+            }
 
             vendorController.updateVendor(selectedVendor);
             vendorsTable.refresh();
 
-            showSuccess("تم تحديث المورد بنجاح");
+            showSuccess("✅ تم تحديث المورد بنجاح");
             handleClear();
 
         } catch (Exception e) {
@@ -176,7 +269,7 @@ public class VendorsViewController {
                 vendorController.deleteVendor(selectedVendor.getLicenseNumber());
                 allVendors.remove(selectedVendor);
                 vendorsList.remove(selectedVendor);
-                showSuccess("تم الحذف بنجاح");
+                showSuccess("✅ تم الحذف بنجاح");
                 handleClear();
             } catch (Exception e) {
                 showError("خطأ", "فشلت عملية الحذف: " + e.getMessage());
@@ -203,6 +296,7 @@ public class VendorsViewController {
         contactField.clear();
         itemComboBox.getSelectionModel().clearSelection();
         supplyPriceField.clear();
+        currentItems.clear();
         vendorsTable.getSelectionModel().clearSelection();
         searchField.clear();
         filterVendors("");
@@ -239,7 +333,13 @@ public class VendorsViewController {
         licenseField.setText(vendor.getLicenseNumber());
         contactField.setText(vendor.getContactName());
 
-        // Clear supply fields as we are not editing contracts directly in this simplified view
+        currentItems.clear();
+        if (vendor.getProvidedItems() != null) {
+            for (SupplyContract contract : vendor.getProvidedItems()) {
+                currentItems.add(new ItemSupplyEntry(contract.getItem(), contract.getSupplyPrice()));
+            }
+        }
+
         itemComboBox.getSelectionModel().clearSelection();
         supplyPriceField.clear();
     }
@@ -253,6 +353,7 @@ public class VendorsViewController {
     private void showSuccess(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("نجاح");
+        alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
     }
@@ -260,7 +361,21 @@ public class VendorsViewController {
     private void showError(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
+        alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    public static class ItemSupplyEntry {
+        private final Item item;
+        private final BigDecimal supplyPrice;
+
+        public ItemSupplyEntry(Item item, BigDecimal supplyPrice) {
+            this.item = item;
+            this.supplyPrice = supplyPrice;
+        }
+
+        public Item getItem() { return item; }
+        public BigDecimal getSupplyPrice() { return supplyPrice; }
     }
 }
