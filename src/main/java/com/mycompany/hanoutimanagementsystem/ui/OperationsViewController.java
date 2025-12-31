@@ -6,6 +6,7 @@ import com.mycompany.hanoutimanagementsystem.controller.VendorController;
 import com.mycompany.hanoutimanagementsystem.model.Item;
 import com.mycompany.hanoutimanagementsystem.model.Section;
 import com.mycompany.hanoutimanagementsystem.model.Vendor;
+import com.mycompany.hanoutimanagementsystem.model.SupplyContract;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -58,8 +59,6 @@ public class OperationsViewController {
         unifiedTable.setItems(unifiedDataList);
 
         setupUnifiedTable();
-        // ✅ حذف السطر الذي كان يسبب المشكلة
-        // addDecimalValidation(supplyPriceField);
         setupFilterControls();
         setupTabPane();
         loadAllData();
@@ -116,17 +115,21 @@ public class OperationsViewController {
 
     private void loadAllData() {
         try {
-            List<Section> sections = sectionController.getAllSections();
-            List<Item> items = itemController.getAllItems();
-            List<Vendor> vendors = vendorController.getAllVendors();
-
-            sectionsList.setAll(sections);
-            itemsList.setAll(items);
-            vendorsList.setAll(vendors);
-
-            sectionFilterComboBox.setItems(sectionsList);
-            itemFilterComboBox.setItems(itemsList);
-            vendorFilterComboBox.setItems(vendorsList);
+            if (sectionController != null) {
+                List<Section> sections = sectionController.getAllSections();
+                sectionsList.setAll(sections);
+                sectionFilterComboBox.setItems(sectionsList);
+            }
+            if (itemController != null) {
+                List<Item> items = itemController.getAllItems();
+                itemsList.setAll(items);
+                itemFilterComboBox.setItems(itemsList);
+            }
+            if (vendorController != null) {
+                List<Vendor> vendors = vendorController.getAllVendors();
+                vendorsList.setAll(vendors);
+                vendorFilterComboBox.setItems(vendorsList);
+            }
 
         } catch (Exception e) {
             showError("خطأ في تحميل البيانات", e.getMessage());
@@ -163,7 +166,7 @@ public class OperationsViewController {
         Item selected = itemFilterComboBox.getValue();
         if (selected == null) return;
         try {
-            List<com.mycompany.hanoutimanagementsystem.model.SupplyContract> contracts = 
+            List<SupplyContract> contracts = 
                 vendorController.getVendorsByItem(selected.getSku());
             unifiedDataList.clear();
             for (var contract : contracts) {
@@ -185,18 +188,28 @@ public class OperationsViewController {
     private void handleVendorCatalogQuery() {
         Vendor selected = vendorFilterComboBox.getValue();
         if (selected == null) return;
+
         try {
-            List<Item> items = vendorController.getItemsByVendor(selected.getLicenseNumber());
+            // Reload vendor to ensure deep fetching of contracts and items
+            Vendor fullVendor = vendorController.findVendor(selected.getLicenseNumber());
+            
+            // بدلاً من جلب الأصناف فقط، نمر عبر عقود التوريد الخاصة بالمورد
             unifiedDataList.clear();
-            for (Item item : items) {
-                unifiedDataList.add(new UnifiedOperationView(
+            
+            if (fullVendor != null && fullVendor.getProvidedItems() != null) {
+                for (SupplyContract contract : fullVendor.getProvidedItems()) {
+                    Item item = contract.getItem(); // الحصول على الصنف من العقد
+                    
+                    unifiedDataList.add(new UnifiedOperationView(
                         String.valueOf(item.getSku()),
                         item.getName(),
                         item.getSection() != null ? item.getSection().getLabel() : "N/A",
-                        item.getPrice()
-                ));
+                        contract.getSupplyPrice() // <--- عرض سعر المورد من العقد مباشرة
+                    ));
+                }
             }
-            if (items.isEmpty()) {
+            
+            if (unifiedDataList.isEmpty()) {
                 showInfo("لا توجد أصناف", "لم يتم ربط أي أصناف بهذا المورد بعد.");
             }
         } catch (Exception e) {

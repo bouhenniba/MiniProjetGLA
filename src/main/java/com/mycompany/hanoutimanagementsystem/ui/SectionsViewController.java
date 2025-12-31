@@ -17,7 +17,7 @@ public class SectionsViewController {
     @FXML private TableColumn<Section, String> codeColumn;
     @FXML private TableColumn<Section, String> labelColumn;
     @FXML private TableColumn<Section, Integer> itemCountColumn;
-    
+
     private SectionController sectionController;
     private ObservableList<Section> sectionsList;
     private ObservableList<Section> allSections; // ✅ قائمة شاملة للبحث
@@ -28,6 +28,11 @@ public class SectionsViewController {
     
     @FXML
     public void initialize() {
+        // Set placeholders
+        codeField.setPromptText("رمز القسم");
+        labelField.setPromptText("اسم القسم");
+        searchField.setPromptText("بحث...");
+
         if (sectionController == null) return;
         
         codeColumn.setCellValueFactory(new PropertyValueFactory<>("code"));

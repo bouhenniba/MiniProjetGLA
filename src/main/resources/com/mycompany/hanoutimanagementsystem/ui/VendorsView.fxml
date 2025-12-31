@@ -52,7 +52,7 @@
             <HBox alignment="CENTER_LEFT" spacing="8">
                 <Label text="📦 الأصناف الموردة" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #2d3748;"/>
                 <Region HBox.hgrow="ALWAYS"/>
-                <Label fx:id="itemsCountLabel" text="0 صنف" 
+                <Label fx:id="itemsCountLabel" text=" صنف"
                       style="-fx-background-color: #667eea; -fx-text-fill: white; -fx-padding: 3px 12px; -fx-background-radius: 12px; -fx-font-size: 11px; -fx-font-weight: bold;"/>
             </HBox>
 

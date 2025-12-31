@@ -54,7 +54,8 @@ public class VendorDAO implements InterfaceVendorDAO {
             TypedQuery<Vendor> query = em.createQuery(
                 "SELECT DISTINCT v FROM Vendor v " +
                 "LEFT JOIN FETCH v.providedItems pi " +
-                "LEFT JOIN FETCH pi.item " +
+                "LEFT JOIN FETCH pi.item i " +
+                "LEFT JOIN FETCH i.section " +
                 "WHERE v.licenseNumber = :license",
                 Vendor.class
             );

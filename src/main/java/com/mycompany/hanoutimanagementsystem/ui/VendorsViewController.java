@@ -4,14 +4,16 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.collections.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
-import javafx.geometry.Insets;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.Priority;
+import javafx.geometry.Pos;
 import com.mycompany.hanoutimanagementsystem.model.*;
 import com.mycompany.hanoutimanagementsystem.controller.*;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class VendorsViewController {
 
@@ -23,8 +25,7 @@ public class VendorsViewController {
     @FXML private ListView<ItemSupplyEntry> itemsListView;
     @FXML private ComboBox<Item> itemComboBox;
     @FXML private TextField supplyPriceField;
-    @FXML private Button addItemButton;
-    @FXML private Button removeItemButton;
+
 
     @FXML private TableView<Vendor> vendorsTable;
     @FXML private TableColumn<Vendor, String> vendorNameColumn;
@@ -49,6 +50,14 @@ public class VendorsViewController {
 
     @FXML
     public void initialize() {
+        // Set placeholders
+        vendorNameField.setPromptText("اسم المورد");
+        licenseField.setPromptText("رقم الرخصة");
+        contactField.setPromptText("جهة الاتصال: 0XXXXXXXXX");
+        searchField.setPromptText("بحث...");
+        supplyPriceField.setPromptText("سعر التوريد");
+        itemComboBox.setPromptText("اختر صنف...");
+
         if (vendorController == null) return;
 
         vendorNameColumn.setCellValueFactory(new PropertyValueFactory<>("vendorName"));
@@ -64,14 +73,42 @@ public class VendorsViewController {
         itemsListView.setItems(currentItems);
         
         itemsListView.setCellFactory(param -> new ListCell<ItemSupplyEntry>() {
+            private final HBox hBox = new HBox(10); // حاوية النص والأيقونة
+            private final Label itemLabel = new Label(); // لعرض اسم الصنف وسعره
+            private final Button editIconBtn = new Button("✎"); // أيقونة التعديل
+
+            {
+                // تنسيق أيقونة التعديل (تصميم عصري) [2]
+                editIconBtn.setStyle("-fx-text-fill: #3182ce; -fx-background-color: transparent; -fx-font-weight: bold; -fx-cursor: hand;");
+                
+                // دفع الأيقونة لليمين تماماً
+                Region spacer = new Region();
+                HBox.setHgrow(spacer, Priority.ALWAYS);
+                
+                hBox.getChildren().addAll(itemLabel, spacer, editIconBtn);
+                hBox.setAlignment(Pos.CENTER_LEFT);
+            }
+
             @Override
             protected void updateItem(ItemSupplyEntry entry, boolean empty) {
                 super.updateItem(entry, empty);
                 if (empty || entry == null) {
-                    setText(null);
                     setGraphic(null);
                 } else {
-                    setText(entry.getItem().getName() + " - " + entry.getSupplyPrice() + " دج");
+                    // عرض بيانات الصنف [1]
+                    itemLabel.setText(entry.getItem().getName() + " - " + entry.getSupplyPrice() + " دج");
+                    
+                    // منطق أيقونة التعديل
+                    editIconBtn.setOnAction(e -> {
+                        // إعادة البيانات إلى حقول الإدخال لتعديلها [10، 26]
+                        itemComboBox.setValue(entry.getItem());
+                        supplyPriceField.setText(entry.getSupplyPrice().toString());
+                        
+                        // تمييز السطر المختار للتسهيل على المستخدم
+                        itemsListView.getSelectionModel().select(entry);
+                    });
+                    
+                    setGraphic(hBox);
                 }
             }
         });
@@ -132,19 +169,32 @@ public class VendorsViewController {
             return;
         }
 
-        boolean exists = currentItems.stream()
-            .anyMatch(entry -> entry.getItem().getSku().equals(selectedItem.getSku()));
-
-        if (exists) {
-            showError("خطأ", "هذا الصنف موجود بالفعل في القائمة");
-            return;
-        }
-
         try {
             BigDecimal price = new BigDecimal(priceText);
-            currentItems.add(new ItemSupplyEntry(selectedItem, price));
+            
+            // البحث عن الصنف في القائمة الحالية
+            ItemSupplyEntry existingEntry = null;
+            for (ItemSupplyEntry entry : currentItems) {
+                if (entry.getItem().getSku().equals(selectedItem.getSku())) {
+                    existingEntry = entry;
+                    break;
+                }
+            }
+
+            if (existingEntry != null) {
+                // تحديث الصنف الموجود بالسعر الجديد
+                int index = currentItems.indexOf(existingEntry);
+                currentItems.set(index, new ItemSupplyEntry(selectedItem, price));
+                itemsListView.getSelectionModel().clearSelection();
+            } else {
+                // إضافة صنف جديد
+                currentItems.add(new ItemSupplyEntry(selectedItem, price));
+            }
+
+            // تنظيف الحقول
             itemComboBox.setValue(null);
             supplyPriceField.clear();
+
         } catch (NumberFormatException e) {
             showError("خطأ", "صيغة السعر غير صحيحة");
         }
@@ -195,6 +245,7 @@ public class VendorsViewController {
 
             allVendors.add(newVendor);
             vendorsList.add(newVendor);
+            vendorsTable.refresh();
 
             showSuccess("✅ تم إضافة المورد بنجاح مع " + currentItems.size() + " صنف");
             handleClear();
@@ -221,13 +272,32 @@ public class VendorsViewController {
             selectedVendor.setVendorName(vendorNameField.getText());
             selectedVendor.setContactName(contactField.getText());
 
-            if (!currentItems.isEmpty() && itemController != null) {
+            // Update items logic
+            if (itemController != null) {
+                // Get existing contracts
+                Set<SupplyContract> existingContracts = selectedVendor.getProvidedItems();
+                
+                // Create a set of SKUs from currentItems for easy lookup
+                Set<Long> currentItemSkus = currentItems.stream()
+                    .map(entry -> entry.getItem().getSku())
+                    .collect(Collectors.toSet());
+
+                // Remove contracts that are no longer in the list
+                existingContracts.removeIf(contract -> !currentItemSkus.contains(contract.getItem().getSku()));
+
+                // Add or update contracts
                 for (ItemSupplyEntry entry : currentItems) {
-                    boolean alreadyLinked = selectedVendor.getProvidedItems().stream()
-                        .anyMatch(sc -> sc.getItem().getSku().equals(entry.getItem().getSku()));
-                    
-                    if (!alreadyLinked) {
-                        try {
+                    boolean found = false;
+                    for (SupplyContract contract : existingContracts) {
+                        if (contract.getItem().getSku().equals(entry.getItem().getSku())) {
+                            contract.setSupplyPrice(entry.getSupplyPrice());
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        // Add new contract
+                         try {
                             itemController.addVendorToItem(
                                 entry.getItem().getSku(), 
                                 selectedVendor.getLicenseNumber(), 
@@ -241,6 +311,12 @@ public class VendorsViewController {
             }
 
             vendorController.updateVendor(selectedVendor);
+            
+            // Refresh table view
+            int index = vendorsList.indexOf(selectedVendor);
+            if (index >= 0) {
+                vendorsList.set(index, selectedVendor);
+            }
             vendorsTable.refresh();
 
             showSuccess("✅ تم تحديث المورد بنجاح");

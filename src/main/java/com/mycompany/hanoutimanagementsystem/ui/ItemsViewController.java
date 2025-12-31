@@ -25,11 +25,11 @@ public class ItemsViewController {
     @FXML private TableColumn<Item, Integer> stockColumn;
     @FXML private TableColumn<Item, BigDecimal> priceColumn; // ✅ عمود السعر
     @FXML private TableColumn<Item, String> sectionColumn;
-    
+
     @FXML private Button addButton;
     @FXML private Button updateButton;
     @FXML private Button deleteButton;
-    
+
     private ItemController itemController;
     private SectionController sectionController;
     
@@ -44,6 +44,15 @@ public class ItemsViewController {
     
     @FXML
     public void initialize() {
+        // Set placeholders
+        skuField.setPromptText("رمز SKU");
+        nameField.setPromptText("اسم الصنف");
+        stockField.setPromptText("الكمية");
+        priceField.setPromptText("السعر");
+        sectionComboBox.setPromptText("اختر القسم...");
+        searchField.setPromptText("بحث...");
+        filterSectionComboBox.setPromptText("تصفية حسب القسم...");
+
         if (itemController == null || sectionController == null) {
             return;
         }

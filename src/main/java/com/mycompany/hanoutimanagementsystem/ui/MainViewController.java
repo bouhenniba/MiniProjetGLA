@@ -8,13 +8,13 @@ public class MainViewController {
     
     @FXML private TabPane mainTabPane;
     @FXML private Label statusLabel;
-    
+
     private final ItemController itemController;
     private final SectionController sectionController;
     private final VendorController vendorController;
-    
+
     private OperationsViewController operationsViewController;
-    
+
     public MainViewController(ItemController itemController, 
                              SectionController sectionController,
                              VendorController vendorController) {

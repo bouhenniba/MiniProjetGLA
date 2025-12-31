@@ -125,8 +125,32 @@ public class ItemController {
             );
         }
         
+        // إزالة العقد من قائمة الصنف
         item.getVendorSupplies().remove(contractToRemove);
-        contractToRemove.getVendor().getProvidedItems().remove(contractToRemove);
+        
+        // إزالة العقد من قائمة المورد (هذا هو الجزء الذي كان يسبب المشكلة)
+        // بدلاً من الوصول إلى providedItems مباشرة (التي قد تكون Lazy)، نعتمد على Cascade من جانب Item
+        // أو نتأكد من تحميل المورد بالكامل إذا لزم الأمر.
+        // ولكن بما أننا في جلسة جديدة، فإن الوصول إلى contractToRemove.getVendor().getProvidedItems() قد يسبب LazyInitializationException
+        // إذا لم يتم تحميل providedItems مسبقاً.
+        
+        // الحل: بما أن العلاقة ثنائية الاتجاه، يكفي إزالتها من جانب واحد وحفظ الكيان المالك للعلاقة (أو كلاهما إذا كنا في نفس الجلسة).
+        // ولكن الأفضل هو الاعتماد على orphanRemoval في Item.
+        
+        // ومع ذلك، لتجنب الخطأ، يجب ألا نحاول الوصول إلى providedItems للمورد إذا لم نكن بحاجة إليها
+        // أو إذا لم نكن متأكدين من أنها محملة.
+        
+        // في حالتنا، نحن نقوم بتحديث Item، و Item يملك العلاقة (mappedBy في Vendor، ولكن هنا SupplyContract هو الكيان الوسيط).
+        // SupplyContract لديه @ManyToOne لـ Item و Vendor.
+        // Item لديه @OneToMany(mappedBy="item", cascade=ALL, orphanRemoval=true)
+        
+        // لذا، إزالة contractToRemove من item.getVendorSupplies() وحفظ item يجب أن يكون كافياً لحذف SupplyContract
+        // بفضل orphanRemoval=true.
+        
+        // السطر المسبب للمشكلة هو:
+        // contractToRemove.getVendor().getProvidedItems().remove(contractToRemove);
+        
+        // سنقوم بإزالته لأننا نعتمد على تحديث Item لحذف العقد.
         
         itemDAO.update(item);
 
